@@ -1,0 +1,7 @@
+__pycache__/
+.pytest_cache/
+*.pyc
+.venv/
+verification_output.json
+private_proprietary_core/
+*.zip

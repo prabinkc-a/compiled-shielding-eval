@@ -1,0 +1,60 @@
+{
+  "auxiliary_forward_backward_mean_ms": {
+    "base": 8.984375,
+    "with_invariance_replay": 23.28125,
+    "amortized_saving_ms_per_update_two_epochs_every_four": 7.1484375
+  },
+  "cascade_known_conditional_failures": [
+    {
+      "suite": "maze",
+      "early_exit": false,
+      "calls": 120,
+      "milliseconds_per_audit": 1.5936266669693093,
+      "executions": 240
+    },
+    {
+      "suite": "maze",
+      "early_exit": true,
+      "calls": 120,
+      "milliseconds_per_audit": 0.33064916691121954,
+      "executions": 120
+    },
+    {
+      "suite": "grader",
+      "early_exit": false,
+      "calls": 120,
+      "milliseconds_per_audit": 0.27720749979683507,
+      "executions": 240
+    },
+    {
+      "suite": "grader",
+      "early_exit": true,
+      "calls": 120,
+      "milliseconds_per_audit": 0.07468916689200948,
+      "executions": 120
+    },
+    {
+      "suite": "tamper",
+      "early_exit": false,
+      "calls": 120,
+      "milliseconds_per_audit": 0.21562666709845266,
+      "executions": 240
+    },
+    {
+      "suite": "tamper",
+      "early_exit": true,
+      "calls": 120,
+      "milliseconds_per_audit": 0.041469167141864695,
+      "executions": 120
+    }
+  ],
+  "permission_build_microseconds_per_32x6_batch": {
+    "D_contextual": 1155.184699979145,
+    "G_compiled": 156.5458999830298
+  },
+  "auxiliary_passes_removed_per_240_update_fit": {
+    "invariance": 120,
+    "replay_max": 120
+  },
+  "warning": "Microbenchmarks isolate components; do not add them to predict total runtime."
+}

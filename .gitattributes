@@ -1,0 +1,2 @@
+# Preserve release hashes byte-for-byte on Windows, macOS and Linux.
+* -text
