@@ -1,0 +1,82 @@
+[
+  {
+    "comparison": "E_unified - baseline",
+    "metric": "truth",
+    "mean": 0.9975144757774966,
+    "low": 0.9973474213420058,
+    "high": 0.9976750297225785,
+    "sd": 0.0004206494193956929
+  },
+  {
+    "comparison": "E_unified - baseline",
+    "metric": "exploit",
+    "mean": -0.9978465863821185,
+    "low": -0.9980981564761254,
+    "high": -0.9975618734961142,
+    "sd": 0.000687526418224088
+  },
+  {
+    "comparison": "E_unified - A_rta",
+    "metric": "truth",
+    "mean": 0.9971311310461696,
+    "low": 0.9968741152985705,
+    "high": 0.9973717634293413,
+    "sd": 0.0006377737480580796
+  },
+  {
+    "comparison": "E_unified - A_rta",
+    "metric": "exploit",
+    "mean": -0.997118895906044,
+    "low": -0.9974389510848765,
+    "high": -0.9967646145306239,
+    "sd": 0.0008617435775593082
+  },
+  {
+    "comparison": "E_unified - B_nyaya",
+    "metric": "truth",
+    "mean": -0.00014646258585072439,
+    "low": -0.0003173251085680413,
+    "high": 5.59943377473369e-06,
+    "sd": 0.00040831464133516814
+  },
+  {
+    "comparison": "E_unified - B_nyaya",
+    "metric": "exploit",
+    "mean": -0.0009758022569885336,
+    "low": -0.0010263021755538718,
+    "high": -0.0009264787332605139,
+    "sd": 0.0001268895336888697
+  },
+  {
+    "comparison": "E_unified - C_process",
+    "metric": "truth",
+    "mean": 0.7464033782858422,
+    "low": 0.6990881613457495,
+    "high": 0.7914436339075267,
+    "sd": 0.11971718996910002
+  },
+  {
+    "comparison": "E_unified - C_process",
+    "metric": "exploit",
+    "mean": -0.04401928378109027,
+    "low": -0.04825412615001522,
+    "high": -0.03977293069345305,
+    "sd": 0.01081219206180155
+  },
+  {
+    "comparison": "E_unified - D_hierarchy",
+    "metric": "truth",
+    "mean": 0.0006465951876333901,
+    "low": 0.0004893392699688866,
+    "high": 0.0008017946941125816,
+    "sd": 0.00039814469713274185
+  },
+  {
+    "comparison": "E_unified - D_hierarchy",
+    "metric": "exploit",
+    "mean": 0.0,
+    "low": 0.0,
+    "high": 0.0,
+    "sd": 0.0
+  }
+]

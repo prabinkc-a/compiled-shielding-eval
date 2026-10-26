@@ -1,0 +1,9 @@
+{
+  "source_hashes_match": true,
+  "policies_checked": 1656,
+  "metric_rows_recomputed": 4968,
+  "max_absolute_metric_error": 2.3987922759260982e-11,
+  "A_full_vs_D_max_probability_error": 4.440892098500626e-16,
+  "B_vs_gate_only_bitwise_equal": true,
+  "certified_support_checks": "passed"
+}

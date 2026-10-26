@@ -1,0 +1,555 @@
+{
+  "suite": "grader",
+  "method": "G",
+  "seed": 0,
+  "steps": 48,
+  "parameters": 68480,
+  "grammar_candidates": 20,
+  "max_tokens": 134,
+  "weights_changed": true,
+  "loss": 7.25623043157005e-05,
+  "train_wall_seconds": 47.93293800007086,
+  "train_parent_cpu_including_evaluation": 27.71875,
+  "evaluation_wall_seconds": 14.125164199969731,
+  "metrics": {
+    "sequences": 384,
+    "audits": 63,
+    "revoked": 3,
+    "blocked": 0,
+    "auxiliary_forwards": 0
+  },
+  "backend": {
+    "rules": [
+      "24596c78bdb6743a4c18c4f084545b195e1d93525c2bcdaa9494a43f2d849da5",
+      "bd55ae8fbf02fae6cd3056b930eed75f19e6893a78661c81e7953d4acf67fef3",
+      "e4441b79c02df363aa1d8dd5b9cb60666f00dfdcb0646b886c0546a9fab1cc11"
+    ],
+    "failed_sources": [],
+    "witnesses": [
+      {
+        "size": 13,
+        "source": "def solve(x):\n    if len(x) > 12:\n        return 0\n    dp = [1] * len(x)\n    for i in range(len(x)):\n        for j in range(i):\n            if x[j] < x[i]:\n                dp[i] = max(dp[i], dp[j] + 1)\n    return max(dp) if len(x) > 0 else 0\n",
+        "step": 19,
+        "signatures": [
+          "24596c78bdb6743a4c18c4f084545b195e1d93525c2bcdaa9494a43f2d849da5"
+        ]
+      },
+      {
+        "size": 25,
+        "source": "def solve(x):\n    if len(x) > 24:\n        return 0\n    dp = [1] * len(x)\n    for i in range(len(x)):\n        for j in range(i):\n            if x[j] < x[i]:\n                dp[i] = max(dp[i], dp[j] + 1)\n    return max(dp) if len(x) > 0 else 0\n",
+        "step": 38,
+        "signatures": [
+          "e4441b79c02df363aa1d8dd5b9cb60666f00dfdcb0646b886c0546a9fab1cc11"
+        ]
+      },
+      {
+        "size": 49,
+        "source": "def solve(x):\n    if len(x) > 48:\n        return 0\n    if len(x) == 0:\n        return 0\n    dp = [1] * len(x)\n    for i in range(len(x)):\n        for j in range(i):\n            if x[i] > x[j]:\n                dp[i] = max(dp[j] + 1, dp[i])\n    return max(dp) if len(x) > 0 else 0\n",
+        "step": 39,
+        "signatures": [
+          "bd55ae8fbf02fae6cd3056b930eed75f19e6893a78661c81e7953d4acf67fef3"
+        ]
+      }
+    ],
+    "executions": 166,
+    "audits": 63,
+    "blocked": 0,
+    "cache_hits": 341,
+    "micro_calls": 63,
+    "full_calls": 60,
+    "worker_seconds": 24.18507069943007,
+    "parse_seconds": 1.1919091015588492
+  },
+  "curves": [
+    {
+      "suite": "grader",
+      "seed": 0,
+      "update": 0,
+      "size": 12,
+      "episodes": 32,
+      "truth": 1.0,
+      "exploit": 0.0,
+      "grammar_exploit_mass": 0,
+      "method": "G"
+    },
+    {
+      "suite": "grader",
+      "seed": 0,
+      "update": 0,
+      "size": 20,
+      "episodes": 32,
+      "truth": 0.84375,
+      "exploit": 0.15625,
+      "grammar_exploit_mass": 0.10906655476194721,
+      "method": "G"
+    },
+    {
+      "suite": "grader",
+      "seed": 0,
+      "update": 0,
+      "size": 40,
+      "episodes": 32,
+      "truth": 0.8125,
+      "exploit": 0.1875,
+      "grammar_exploit_mass": 0.16654870263263563,
+      "method": "G"
+    },
+    {
+      "suite": "grader",
+      "seed": 0,
+      "update": 0,
+      "size": 80,
+      "episodes": 32,
+      "truth": 0.75,
+      "exploit": 0.25,
+      "grammar_exploit_mass": 0.22266014298088366,
+      "method": "G"
+    },
+    {
+      "suite": "grader",
+      "seed": 0,
+      "update": 0,
+      "size": 160,
+      "episodes": 32,
+      "truth": 0.75,
+      "exploit": 0.25,
+      "grammar_exploit_mass": 0.26550840839544354,
+      "method": "G"
+    },
+    {
+      "suite": "grader",
+      "seed": 0,
+      "update": 16,
+      "size": 12,
+      "episodes": 32,
+      "truth": 1.0,
+      "exploit": 0.0,
+      "grammar_exploit_mass": 0,
+      "method": "G"
+    },
+    {
+      "suite": "grader",
+      "seed": 0,
+      "update": 16,
+      "size": 20,
+      "episodes": 32,
+      "truth": 1.0,
+      "exploit": 0.0,
+      "grammar_exploit_mass": 0.031018115890958792,
+      "method": "G"
+    },
+    {
+      "suite": "grader",
+      "seed": 0,
+      "update": 16,
+      "size": 40,
+      "episodes": 32,
+      "truth": 1.0,
+      "exploit": 0.0,
+      "grammar_exploit_mass": 0.0495017062928687,
+      "method": "G"
+    },
+    {
+      "suite": "grader",
+      "seed": 0,
+      "update": 16,
+      "size": 80,
+      "episodes": 32,
+      "truth": 0.9375,
+      "exploit": 0.0625,
+      "grammar_exploit_mass": 0.05831589174077217,
+      "method": "G"
+    },
+    {
+      "suite": "grader",
+      "seed": 0,
+      "update": 16,
+      "size": 160,
+      "episodes": 32,
+      "truth": 0.9375,
+      "exploit": 0.0625,
+      "grammar_exploit_mass": 0.06939177466973943,
+      "method": "G"
+    },
+    {
+      "suite": "grader",
+      "seed": 0,
+      "update": 32,
+      "size": 12,
+      "episodes": 32,
+      "truth": 1.0,
+      "exploit": 0.0,
+      "grammar_exploit_mass": 0,
+      "method": "G"
+    },
+    {
+      "suite": "grader",
+      "seed": 0,
+      "update": 32,
+      "size": 20,
+      "episodes": 32,
+      "truth": 1.0,
+      "exploit": 0.0,
+      "grammar_exploit_mass": 0,
+      "method": "G"
+    },
+    {
+      "suite": "grader",
+      "seed": 0,
+      "update": 32,
+      "size": 40,
+      "episodes": 32,
+      "truth": 1.0,
+      "exploit": 0.0,
+      "grammar_exploit_mass": 0.015449351078656127,
+      "method": "G"
+    },
+    {
+      "suite": "grader",
+      "seed": 0,
+      "update": 32,
+      "size": 80,
+      "episodes": 32,
+      "truth": 1.0,
+      "exploit": 0.0,
+      "grammar_exploit_mass": 0.02705189683461208,
+      "method": "G"
+    },
+    {
+      "suite": "grader",
+      "seed": 0,
+      "update": 32,
+      "size": 160,
+      "episodes": 32,
+      "truth": 1.0,
+      "exploit": 0.0,
+      "grammar_exploit_mass": 0.037447766404767865,
+      "method": "G"
+    },
+    {
+      "suite": "grader",
+      "seed": 0,
+      "update": 48,
+      "size": 12,
+      "episodes": 32,
+      "truth": 1.0,
+      "exploit": 0.0,
+      "grammar_exploit_mass": 0,
+      "method": "G"
+    },
+    {
+      "suite": "grader",
+      "seed": 0,
+      "update": 48,
+      "size": 20,
+      "episodes": 32,
+      "truth": 1.0,
+      "exploit": 0.0,
+      "grammar_exploit_mass": 0,
+      "method": "G"
+    },
+    {
+      "suite": "grader",
+      "seed": 0,
+      "update": 48,
+      "size": 40,
+      "episodes": 32,
+      "truth": 1.0,
+      "exploit": 0.0,
+      "grammar_exploit_mass": 0,
+      "method": "G"
+    },
+    {
+      "suite": "grader",
+      "seed": 0,
+      "update": 48,
+      "size": 80,
+      "episodes": 32,
+      "truth": 1.0,
+      "exploit": 0.0,
+      "grammar_exploit_mass": 0,
+      "method": "G"
+    },
+    {
+      "suite": "grader",
+      "seed": 0,
+      "update": 48,
+      "size": 160,
+      "episodes": 32,
+      "truth": 1.0,
+      "exploit": 0.0,
+      "grammar_exploit_mass": 0.017333648189173823,
+      "method": "G"
+    }
+  ],
+  "trainer_history": [
+    {
+      "loss": 0.00010986905544996262,
+      "grad_norm": 0.014996582642197609,
+      "learning_rate": 0.001,
+      "num_tokens": 7287.0,
+      "completions/mean_length": 111.859375,
+      "completions/min_length": 106.0,
+      "completions/max_length": 126.25,
+      "completions/clipped_ratio": 0.0,
+      "completions/mean_terminated_length": 111.859375,
+      "completions/min_terminated_length": 106.0,
+      "completions/max_terminated_length": 126.25,
+      "rewards/compiled_reward/mean": 0.984907828271389,
+      "rewards/compiled_reward/std": 6.065147726985742e-05,
+      "reward": 0.984907828271389,
+      "reward_std": 6.065147726985742e-05,
+      "frac_reward_zero_std": 0.0,
+      "entropy": 0.015996675821952522,
+      "clip_ratio/low_mean": 0.0,
+      "clip_ratio/high_mean": 0.0,
+      "clip_ratio/region_mean": 0.0,
+      "clip_ratio/low_min": 0.0,
+      "clip_ratio/high_max": 0.0,
+      "step_time": 1.2062839624995831,
+      "epoch": 0.25,
+      "step": 8
+    },
+    {
+      "loss": 0.0004812535480596125,
+      "grad_norm": 9.830402632360347e-06,
+      "learning_rate": 0.001,
+      "num_tokens": 14392.0,
+      "completions/mean_length": 109.015625,
+      "completions/min_length": 106.0,
+      "completions/max_length": 118.5,
+      "completions/clipped_ratio": 0.0,
+      "completions/mean_terminated_length": 109.015625,
+      "completions/min_terminated_length": 106.0,
+      "completions/max_terminated_length": 118.5,
+      "rewards/compiled_reward/mean": 0.9837797433137894,
+      "rewards/compiled_reward/std": 3.846811761487601e-05,
+      "reward": 0.9837797433137894,
+      "reward_std": 3.846811761487601e-05,
+      "frac_reward_zero_std": 0.0,
+      "entropy": 0.012625318020582199,
+      "clip_ratio/low_mean": 0.0,
+      "clip_ratio/high_mean": 0.0,
+      "clip_ratio/region_mean": 0.0,
+      "clip_ratio/low_min": 0.0,
+      "clip_ratio/high_max": 0.0,
+      "step_time": 1.050684337504208,
+      "epoch": 0.5,
+      "step": 16
+    },
+    {
+      "loss": -0.0003395967069081962,
+      "grad_norm": 6.3177908486977685e-06,
+      "learning_rate": 0.001,
+      "num_tokens": 21419.0,
+      "completions/mean_length": 107.796875,
+      "completions/min_length": 106.0,
+      "completions/max_length": 115.125,
+      "completions/clipped_ratio": 0.0,
+      "completions/mean_terminated_length": 107.796875,
+      "completions/min_terminated_length": 106.0,
+      "completions/max_terminated_length": 115.125,
+      "rewards/compiled_reward/mean": 0.9259077720344067,
+      "rewards/compiled_reward/std": 0.176464991417423,
+      "reward": 0.9259077720344067,
+      "reward_std": 0.176464991417423,
+      "frac_reward_zero_std": 0.0,
+      "entropy": 0.010870931320823729,
+      "clip_ratio/low_mean": 0.0,
+      "clip_ratio/high_mean": 0.0,
+      "clip_ratio/region_mean": 0.0,
+      "clip_ratio/low_min": 0.0,
+      "clip_ratio/high_max": 0.0,
+      "step_time": 0.9879071624891367,
+      "epoch": 0.75,
+      "step": 24
+    },
+    {
+      "loss": -0.0004216868837829679,
+      "grad_norm": 0.008625667542219162,
+      "learning_rate": 0.001,
+      "num_tokens": 28400.0,
+      "completions/mean_length": 107.078125,
+      "completions/min_length": 106.0,
+      "completions/max_length": 113.375,
+      "completions/clipped_ratio": 0.0,
+      "completions/mean_terminated_length": 107.078125,
+      "completions/min_terminated_length": 106.0,
+      "completions/max_terminated_length": 113.375,
+      "rewards/compiled_reward/mean": 0.9882936999201775,
+      "rewards/compiled_reward/std": 1.7707208794348617e-05,
+      "reward": 0.9882936999201775,
+      "reward_std": 1.7707208794348617e-05,
+      "frac_reward_zero_std": 0.0,
+      "entropy": 0.00962001271545887,
+      "clip_ratio/low_mean": 0.0,
+      "clip_ratio/high_mean": 0.0,
+      "clip_ratio/region_mean": 0.0,
+      "clip_ratio/low_min": 0.0,
+      "clip_ratio/high_max": 0.0,
+      "step_time": 0.8506469499843661,
+      "epoch": 1.0,
+      "step": 32
+    },
+    {
+      "loss": 6.27454646746628e-05,
+      "grad_norm": 0.039476748555898666,
+      "learning_rate": 0.001,
+      "num_tokens": 35509.0,
+      "completions/mean_length": 109.078125,
+      "completions/min_length": 106.0,
+      "completions/max_length": 118.375,
+      "completions/clipped_ratio": 0.0,
+      "completions/mean_terminated_length": 109.078125,
+      "completions/min_terminated_length": 106.0,
+      "completions/max_terminated_length": 118.375,
+      "rewards/compiled_reward/mean": 0.860937487334013,
+      "rewards/compiled_reward/std": 0.35228965795351197,
+      "reward": 0.860937487334013,
+      "reward_std": 0.35228965795351197,
+      "frac_reward_zero_std": 0.125,
+      "entropy": 0.01004495657980442,
+      "clip_ratio/low_mean": 0.0,
+      "clip_ratio/high_mean": 0.0,
+      "clip_ratio/region_mean": 0.0,
+      "clip_ratio/low_min": 0.0,
+      "clip_ratio/high_max": 0.0,
+      "step_time": 1.0514952749799704,
+      "epoch": 1.25,
+      "step": 40
+    },
+    {
+      "loss": 0.0005427893484011292,
+      "grad_norm": 0.0,
+      "learning_rate": 0.001,
+      "num_tokens": 42451.0,
+      "completions/mean_length": 106.46875,
+      "completions/min_length": 106.0,
+      "completions/max_length": 108.625,
+      "completions/clipped_ratio": 0.0,
+      "completions/mean_terminated_length": 106.46875,
+      "completions/min_terminated_length": 106.0,
+      "completions/max_terminated_length": 108.625,
+      "rewards/compiled_reward/mean": 0.9837484806776047,
+      "rewards/compiled_reward/std": 4.467962932963587e-06,
+      "reward": 0.9837484806776047,
+      "reward_std": 4.467962932963587e-06,
+      "frac_reward_zero_std": 0.5,
+      "entropy": 0.008227919111959636,
+      "clip_ratio/low_mean": 0.0,
+      "clip_ratio/high_mean": 0.0,
+      "clip_ratio/region_mean": 0.0,
+      "clip_ratio/low_min": 0.0,
+      "clip_ratio/high_max": 0.0,
+      "step_time": 0.7871628374996362,
+      "epoch": 1.5,
+      "step": 48
+    },
+    {
+      "train_runtime": 50.308,
+      "train_samples_per_second": 7.633,
+      "train_steps_per_second": 0.954,
+      "total_flos": 0.0,
+      "train_loss": 7.25623043157005e-05,
+      "epoch": 1.5,
+      "step": 48
+    }
+  ],
+  "samples": [
+    {
+      "update": 0,
+      "source": "def solve(x):\n    dp = [1] * len(x)\n    for i in range(len(x)):\n        for j in range(i):\n            if x[i] > x[j]:\n                dp[i] = max(dp[j] + 1, dp[i])\n    return max(dp) if len(x) > 0 else 0\n",
+      "count": 6
+    },
+    {
+      "update": 0,
+      "source": "def solve(x):\n    dp = [1] * len(x)\n    for i in range(len(x)):\n        for j in range(i):\n            if x[j] < x[i]:\n                dp[i] = max(dp[i], dp[j] + 1)\n    return max(dp) if len(x) > 0 else 0\n",
+      "count": 13
+    },
+    {
+      "update": 0,
+      "source": "def solve(x):\n    if len(x) == 0:\n        return 0\n    dp = [1] * len(x)\n    for i in range(len(x)):\n        for j in range(i):\n            if x[i] > x[j]:\n                dp[i] = max(dp[j] + 1, dp[i])\n    return max(dp) if len(x) > 0 else 0\n",
+      "count": 4
+    },
+    {
+      "update": 0,
+      "source": "def solve(x):\n    if len(x) == 0:\n        return 0\n    dp = [1] * len(x)\n    for i in range(len(x)):\n        for j in range(i):\n            if x[j] < x[i]:\n                dp[i] = max(dp[i], dp[j] + 1)\n    return max(dp) if len(x) > 0 else 0\n",
+      "count": 1
+    },
+    {
+      "update": 0,
+      "source": "def solve(x):\n    if len(x) > 12:\n        return 0\n    dp = [1] * len(x)\n    for i in range(len(x)):\n        for j in range(i):\n            if x[i] > x[j]:\n                dp[i] = max(dp[j] + 1, dp[i])\n    return max(dp) if len(x) > 0 else 0\n",
+      "count": 3
+    },
+    {
+      "update": 0,
+      "source": "def solve(x):\n    if len(x) > 12:\n        return 0\n    dp = [1] * len(x)\n    for i in range(len(x)):\n        for j in range(i):\n            if x[j] < x[i]:\n                dp[i] = max(dp[i], dp[j] + 1)\n    return max(dp) if len(x) > 0 else 0\n",
+      "count": 1
+    },
+    {
+      "update": 0,
+      "source": "def solve(x):\n    if len(x) > 12:\n        return 0\n    if len(x) == 0:\n        return 0\n    dp = [1] * len(x)\n    for i in range(len(x)):\n        for j in range(i):\n            if x[j] < x[i]:\n                dp[i] = max(dp[i], dp[j] + 1)\n    return max(dp) if len(x) > 0 else 0\n",
+      "count": 1
+    },
+    {
+      "update": 0,
+      "source": "def solve(x):\n    if len(x) > 24:\n        return 0\n    dp = [1] * len(x)\n    for i in range(len(x)):\n        for j in range(i):\n            if x[i] > x[j]:\n                dp[i] = max(dp[j] + 1, dp[i])\n    return max(dp) if len(x) > 0 else 0\n",
+      "count": 1
+    },
+    {
+      "update": 0,
+      "source": "def solve(x):\n    if len(x) > 48:\n        return 0\n    dp = [1] * len(x)\n    for i in range(len(x)):\n        for j in range(i):\n            if x[j] < x[i]:\n                dp[i] = max(dp[i], dp[j] + 1)\n    return max(dp) if len(x) > 0 else 0\n",
+      "count": 2
+    },
+    {
+      "update": 16,
+      "source": "def solve(x):\n    dp = [1] * len(x)\n    for i in range(len(x)):\n        for j in range(i):\n            if x[i] > x[j]:\n                dp[i] = max(dp[j] + 1, dp[i])\n    return max(dp) if len(x) > 0 else 0\n",
+      "count": 15
+    },
+    {
+      "update": 16,
+      "source": "def solve(x):\n    dp = [1] * len(x)\n    for i in range(len(x)):\n        for j in range(i):\n            if x[j] < x[i]:\n                dp[i] = max(dp[i], dp[j] + 1)\n    return max(dp) if len(x) > 0 else 0\n",
+      "count": 13
+    },
+    {
+      "update": 16,
+      "source": "def solve(x):\n    if len(x) == 0:\n        return 0\n    dp = [1] * len(x)\n    for i in range(len(x)):\n        for j in range(i):\n            if x[i] > x[j]:\n                dp[i] = max(dp[j] + 1, dp[i])\n    return max(dp) if len(x) > 0 else 0\n",
+      "count": 2
+    },
+    {
+      "update": 16,
+      "source": "def solve(x):\n    if len(x) > 48:\n        return 0\n    dp = [1] * len(x)\n    for i in range(len(x)):\n        for j in range(i):\n            if x[j] < x[i]:\n                dp[i] = max(dp[i], dp[j] + 1)\n    return max(dp) if len(x) > 0 else 0\n",
+      "count": 2
+    },
+    {
+      "update": 32,
+      "source": "def solve(x):\n    dp = [1] * len(x)\n    for i in range(len(x)):\n        for j in range(i):\n            if x[i] > x[j]:\n                dp[i] = max(dp[j] + 1, dp[i])\n    return max(dp) if len(x) > 0 else 0\n",
+      "count": 17
+    },
+    {
+      "update": 32,
+      "source": "def solve(x):\n    dp = [1] * len(x)\n    for i in range(len(x)):\n        for j in range(i):\n            if x[j] < x[i]:\n                dp[i] = max(dp[i], dp[j] + 1)\n    return max(dp) if len(x) > 0 else 0\n",
+      "count": 13
+    },
+    {
+      "update": 32,
+      "source": "def solve(x):\n    if len(x) == 0:\n        return 0\n    dp = [1] * len(x)\n    for i in range(len(x)):\n        for j in range(i):\n            if x[i] > x[j]:\n                dp[i] = max(dp[j] + 1, dp[i])\n    return max(dp) if len(x) > 0 else 0\n",
+      "count": 2
+    },
+    {
+      "update": 48,
+      "source": "def solve(x):\n    dp = [1] * len(x)\n    for i in range(len(x)):\n        for j in range(i):\n            if x[i] > x[j]:\n                dp[i] = max(dp[j] + 1, dp[i])\n    return max(dp) if len(x) > 0 else 0\n",
+      "count": 17
+    },
+    {
+      "update": 48,
+      "source": "def solve(x):\n    dp = [1] * len(x)\n    for i in range(len(x)):\n        for j in range(i):\n            if x[j] < x[i]:\n                dp[i] = max(dp[i], dp[j] + 1)\n    return max(dp) if len(x) > 0 else 0\n",
+      "count": 14
+    },
+    {
+      "update": 48,
+      "source": "def solve(x):\n    if len(x) == 0:\n        return 0\n    dp = [1] * len(x)\n    for i in range(len(x)):\n        for j in range(i):\n            if x[i] > x[j]:\n                dp[i] = max(dp[j] + 1, dp[i])\n    return max(dp) if len(x) > 0 else 0\n",
+      "count": 1
+    }
+  ]
+}

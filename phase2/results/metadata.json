@@ -1,0 +1,30 @@
+{
+  "config": {
+    "seeds": 8,
+    "ablation_seeds": 4,
+    "updates": 240,
+    "workers": 4,
+    "eval_count": 96,
+    "output": "results",
+    "pilot": false,
+    "resume": false
+  },
+  "torch": "2.14.1+cpu",
+  "numpy": "2.5.1",
+  "python": "3.13.7 (tags/v3.13.7:bcee1c3, Aug 14 2025, 14:15:11) [MSC v.1944 64 bit (AMD64)]",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "torch_threads": 1,
+  "source_sha256": {
+    "phase2\\defenses.py": "d53e02f64ef1858c1f82bf2b81bb6712c5abbf0b1ffc1e50e941c34087168329",
+    "phase2\\run.py": "2f51d625205b18bc3e6b6a5ba34b0c594ab9b0563e1f783353f8acbb643dbfbc",
+    "phase2\\train.py": "53967ce62f631acfa6ba03fc627d055558f1136ce823465f24f72aa1a39c62f6",
+    "phase2\\worlds.py": "4220b75761d2097c1eab4e4e7834465bd0debbd4cfd4a0159dec2304c99dd552",
+    "phase2\\__init__.py": "c4745b59dec479f77cb85890d4c3b611143b8468e27d7efa573b9eca3f0198b4",
+    "torch_integration.py": "05c2c5b1708649aa479c5064c61320a5a0ba29bdb464496e549c7297e06d5089"
+  },
+  "models": 156,
+  "training_sequences": 1198080,
+  "actual_program_executions": 2216324,
+  "evaluation_sequences": 359424,
+  "elapsed_seconds": 696.2302837000461
+}

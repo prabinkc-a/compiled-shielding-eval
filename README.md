@@ -1,63 +1,48 @@
-# Runtime-Compiled Action Shielding — Evaluation Release
+# Automated exploit discovery and compiled shielding
 
-Frozen compiled shields eliminate the designated exploit support in a **6,492-parameter GRU** benchmark: **99.859% true accuracy, 0.000000% exact risk**, at **1.00× measured steady-state training CPU**. A bounded Python extension reaches **100% sampled accuracy but retains 0.4415% exact grammar risk**; these are small-model results, not a general LLM safety guarantee.
+We tested whether sparse counterexample search can turn an incomplete reward specification into reusable execution-time restrictions. We built adversarial scale/cue probing and runtime AST shield compilation around PyTorch policies and a bounded TRL code generator. G discovered 32/36 supplied Python cutoff-family instances, reducing grammar risk from 2.70% to 0.44% at 1.34× training wall time; a new trigger-blind stress test found 162/216 family instances. Finite probing still misses triggers, leaving 0.44% risk in the original Python grammar and larger coverage gaps in the broader test.
 
-| Frozen policy | Blind-spot accuracy | Exact DSL exploit risk | Training CPU¹ |
+| Neural DSL method | Held-out accuracy | Exact exploit mass | Training CPU |
 |---|---:|---:|---:|
-| Baseline | 30.154% | 69.791862% | 1.00× |
-| D | 90.310% | 11.602297% | 1.07× |
-| E | 90.310% | 11.602352% | 1.33× |
-| F | 99.902% | 0.033013% | 1.39× |
-| G | **99.859%** | **0.000000%** | **1.00×** |
+| Standard GRPO | 30.15% | 69.7919% | 1.00× |
+| D · monitored-only static mask | 90.31% | 11.6023% | 1.04× |
+| F · soft adaptive probing | 99.90% | 0.0330% | 1.38× |
+| G · discovery + compiled shielding | 99.86% | 0.0000% | 0.99× |
+| Oracle · static global mask from step 0 | 98.84% | 0.0000% | 1.02× |
 
-![Measured accuracy–cost tradeoff and scale generalization](assets/neural_pareto.png)
+Accuracy is sampled on larger, unmonitored tasks; exact mass integrates the complete finite DSL at one large task per suite/seed. CPU is a fresh serial warm-checkpoint calibration against standard GRPO, not inference latency or an LLM speedup. The table is the DSL experiment; the opening Python results are a separate experiment.
 
-¹ Historical measurements from the common v3 serial calibration, **not inference-only timings** and not recomputed by the frozen-checkpoint verifier. Exact risk and sampled accuracy use different, explicitly specified test contexts. G missed the 99.90% accuracy target by 0.041 percentage points; it did not improve on F's accuracy.
+**The oracle correction matters.** Its measured accuracy is 98.84%, not an assumed 99.86%. The oracle eliminates every specified shortcut from initialization but can still choose ordinary incorrect algorithms or abstain. It differs from D only in the mask; F/G also train on some adversarial contexts. G matches the oracle's zero exploit support after discovery, but this design does not isolate discovery as the sole cause of its accuracy advantage.
 
-## Verify it yourself
+**All training, probing, compilation and evaluation source is public under MIT.** Start with [REPORT.md](REPORT.md) for the findings and [LESSWRONG_POST.md](LESSWRONG_POST.md) for the discussion draft.
 
-Tested on **Python 3.13.7, CPU**, with pinned dependencies. From a terminal:
+## Reproduce
 
-```sh
-git clone https://github.com/MLucifer13/compiled-shielding-eval.git && cd compiled-shielding-eval
+Use Python 3.13 and install the tested dependencies, then run the complete experiment pipeline:
+
+```bash
 python -m pip install -r requirements.txt
-python verify_leaderboard.py
+python reproduce_all.py
 ```
 
-The neural verifier completed its live computation in **17.70 seconds** on the reference machine (**22.09 seconds including imports** in the latest reference run). The **under-one-minute target applies to neural verification after installation**, not cloning, dependency downloads, arbitrary hardware, or the optional Python evaluation. It loads all **120 neural policies**, verifies SHA-256 file hashes, regenerates tasks, executes solutions, checks every sampled evaluation cell, and integrates all **2,304 programs** per stress context. It does not print stored scores as predictions.
+The default performs fresh training and evaluation in a new `reproduced/` directory; it does not substitute cached checkpoints for training. It includes the historical tabular/neural/Python experiments, the new oracle control, trigger-blind discovery, calibration and report generation. This is a CPU research run, not a promised one-minute demo; runtime depends on hardware.
 
-For the complete **18-model Python** check:
-
-```sh
-python verify_leaderboard.py --include-python
+```bash
+python reproduce_all.py --smoke        # tests + two real TRL updates; not headline reproduction
+python reproduce_all.py --verify-only  # hashes, checkpoint reloads, exact risk and witness checks
 ```
 
-The combined check took **108.06 seconds** in the initial reference run. It executes actual supplied Python functions in isolated subprocesses and reproduces both **100.000% sampled G accuracy** and **0.441524% mean residual grammar risk at size 160**. This worker is for hash-verified benchmark functions, **not arbitrary hostile Python**.
+The new 24 oracle fits and expanded discovery experiment were executed for this release. Prior D/F/G and Python results retain their original checkpoints and source provenance; they are not relabeled as newly trained. Full fresh orchestration is supplied; see [VALIDATION.md](VALIDATION.md) for exactly what was executed locally.
 
-For fresh neural task realizations rather than the published leaderboard:
+## Inspect the engineering
 
-```sh
-python verify_leaderboard.py --fresh-seed 2027
-```
+- [train.py](train.py), [defenses.py](defenses.py), [shield.py](shield.py): actual neural updates, adaptive verifier and DSL compiler.
+- [adversarial_prober.py](adversarial_prober.py), [ast_compiler.py](ast_compiler.py): parameter-blind search, traced counterexamples and guarded subtree transfer.
+- [python_backend.py](python_backend.py), [python_grammar.py](python_grammar.py), [trl_patch.py](trl_patch.py): generalized broker, lexical grammar and support-consistent TRL integration.
+- [trl_example.py](trl_example.py): runnable integration example with a local tiny GPT-2; no download.
+- [phase2/](phase2/), [phase3/](phase3/): original complete implementations, checkpoints, raw measurements and historical reports. Their reports describe older protocols; [REPORT.md](REPORT.md) is the current interpretation.
+- [extension_results/](extension_results/): oracle checkpoints, per-family discovery outcomes, input witnesses, costs and source hashes.
 
-Results are written to `verification_output.json`. Fixed-seed sampled metrics can depend on library versions and platform RNG behavior; a mismatch fails visibly rather than silently substituting reference values. An exact zero claim applies only to the published post-compilation DSL support. New task seeds are a stress test, not proof of absence of training contamination.
+![Generalization and discovery recall](assets/generalization_discovery.png)
 
-## What is released
-
-- `benchmark_environments/`: task generators, executable program semantics, and independent ground-truth grading.
-- `inference/`: neural architecture, frozen permission application, and a read-only Python token-table interpreter.
-- `checkpoints/`: tensor-only neural weights, final Python models/tokenizers, and frozen inference artifacts.
-- `results/`: reference evaluation cells, bootstrap summaries, reported ablations, and historical timing evidence.
-- `assets/`: Pareto, learning-curve, and latency figures.
-- [Technical report](TECHNICAL_REPORT.md) / [three-page PDF](TECHNICAL_REPORT.pdf): protocol, confidence intervals, threat model, limitations, and the v1→v3 empirical arc.
-- [Export audit](PUBLIC_AUDIT.md): what was checked before publication and the limits of that check.
-
-There is **no private training loop, optimizer, adaptive-search implementation, dynamic compiler, or TRL training wrapper** in this release. The dependency list intentionally contains no TRL package.
-
-## Code & Training Engine Availability
-
-To support independent verification while protecting ongoing research IP, this repository releases the full evaluation harness, adversarial stress suites, and frozen model checkpoints. The training engine (`AlgorithmGGRPOTrainer`) and dynamic shield compiler are available for live walkthroughs upon request.
-
-Open an issue on this repository or contact [Prabin K C](https://github.com/MLucifer13) to arrange a technical discussion. The public harness can verify deployed behavior; **it cannot reproduce private training, prove training-data provenance, or independently rerun training-cost claims**. Deployed masks and permitted programs necessarily reveal some behavior; withholding source is not a guarantee against reverse engineering.
-
-The MIT license covers the files actually supplied in this repository. It does not grant access to separately withheld source. No lab affiliation, endorsement, or frontier-scale efficacy is claimed.
+The original Python experiment used a supplied grammar with known cutoff shapes; it did not discover arbitrary Python attacks. The expanded test hides trigger parameters from the prober, uses an empty rule store, and evaluates unseen suffix variants, but the researcher still designed the attack catalog. The expanded study covers sum/LIS, not maze value triggers, and is a discovery stress test rather than new neural training. No Qwen/Llama safety result is claimed.

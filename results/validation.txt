@@ -1,0 +1,24 @@
+Validation captured from commands executed for this release
+Date: 2026-10-26
+
+Command: python -m pytest -q (initial core implementation)
+..........                                                               [100%]
+10 passed in 0.59s
+
+Command: .\.venv\Scripts\python.exe -m pytest -q
+.................                                                        [100%]
+17 passed in 10.89s
+
+Command: .\.venv\Scripts\python.exe torch_integration.py
+{'torch': '2.14.1+cpu', 'probabilities': [[0.9905864596366882, 0.009413576684892178, 0.0]]}
+
+Command: python audit_release.py
+Source hashes from the numerical run match current benchmark sources.
+1,656 fitted probability distributions checked.
+4,968 metric rows independently recomputed from policies and outcome banks.
+Maximum absolute metric error: 2.3987922759260982e-11.
+Maximum A-full versus D probability difference: 4.440892098500626e-16.
+B versus E-gate-only probability arrays are bitwise equal.
+All certified support checks passed.
+
+Chart visual QA: results/leaderboard.png inspected after adjusting footer spacing.

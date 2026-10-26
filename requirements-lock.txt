@@ -1,0 +1,7 @@
+# Versions actually used for the CPU benchmark, analysis, and tests.
+# Interpreter: Python 3.13.7, Windows x86-64.
+numpy==2.5.1
+matplotlib==3.11.1
+pytest==9.1.1
+# Optional integration tested separately with torch==2.14.1+cpu,
+# installed using --index-url https://download.pytorch.org/whl/cpu

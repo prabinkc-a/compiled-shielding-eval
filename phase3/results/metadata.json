@@ -1,0 +1,43 @@
+{
+  "config": {
+    "seeds": 8,
+    "ablation_seeds": 4,
+    "updates": 240,
+    "workers": 4,
+    "eval_count": 96,
+    "output": "results",
+    "pilot": false,
+    "resume": false
+  },
+  "torch": "2.14.1+cpu",
+  "numpy": "2.5.1",
+  "python": "3.13.7 (tags/v3.13.7:bcee1c3, Aug 14 2025, 14:15:11) [MSC v.1944 64 bit (AMD64)]",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "torch_threads": 1,
+  "source_sha256": {
+    "phase3\\run.py": "ce3208b2522743b2d58d4a7d2b36906eee4689f981af0ad3070b0683f0a2ac62",
+    "phase3\\shield.py": "21ae084ba3a1ff566bc43b0529173f72cd52506f006bc2c37589156d2391c843",
+    "phase3\\train.py": "72d7b8c278ed78eebe694d599c580cb249d3b1401beaf502bbc34d81e433a87d",
+    "phase3\\__init__.py": "bb6286d8a24b57ee8195c9088e4f1b72543f78440d9098a9a44b728c5d6dea29",
+    "phase2\\audit.py": "1de1acd022e631ba7fcff0164d689f56e21d839cca30cc1f580a75f4c5693d7b",
+    "phase2\\defenses.py": "d53e02f64ef1858c1f82bf2b81bb6712c5abbf0b1ffc1e50e941c34087168329",
+    "phase2\\exact_risk.py": "9afb9d100fc242c714d72fdf4793e3756d7536154fd7d758c4a31599c0ecfa03",
+    "phase2\\legacy_bridge.py": "dce5590592a6d88033dccc8efc05815e9ad1faeae564495f622b2d703d98665f",
+    "phase2\\package.py": "1f09bc7349b95be54cc7ad44c2b336a3449a3bfd513f6e709a5f535fc8f26ee9",
+    "phase2\\profile.py": "a7a19f4adcd91e900a7136c4a3af613cb71b7dca1921c7411dff278c0d596664",
+    "phase2\\report.py": "5fe9c9a57b256b15c479e2e102e47daa9bee731d92f8129f0c68b2c69c55eb1b",
+    "phase2\\run.py": "2f51d625205b18bc3e6b6a5ba34b0c594ab9b0563e1f783353f8acbb643dbfbc",
+    "phase2\\train.py": "53967ce62f631acfa6ba03fc627d055558f1136ce823465f24f72aa1a39c62f6",
+    "phase2\\trl_backend.py": "12dc8a6e3189b0600ffe5f9e3b1b9147cfce31f9327b9ab5847d179748c2a351",
+    "phase2\\trl_patch.py": "505611d8f2dff8655980b5daac54a2712d2192b11af8fd7a96e2c6803200aab3",
+    "phase2\\trl_smoke.py": "fdab195b02d1505f83136fa8ae79624d6f3587125b7d7dd796a417f335021f3b",
+    "phase2\\worlds.py": "4220b75761d2097c1eab4e4e7834465bd0debbd4cfd4a0159dec2304c99dd552",
+    "phase2\\__init__.py": "c4745b59dec479f77cb85890d4c3b611143b8468e27d7efa573b9eca3f0198b4",
+    "torch_integration.py": "05c2c5b1708649aa479c5064c61320a5a0ba29bdb464496e549c7297e06d5089"
+  },
+  "models": 60,
+  "training_sequences": 460800,
+  "actual_program_executions": 497413,
+  "evaluation_sequences": 138240,
+  "elapsed_seconds": 194.15004009997938
+}

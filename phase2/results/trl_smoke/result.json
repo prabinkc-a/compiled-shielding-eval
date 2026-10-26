@@ -1,0 +1,21 @@
+{
+  "status": "passed",
+  "steps": 2,
+  "model": "random local GPT2, 1 layer / 32 hidden / 2 heads",
+  "parameters": 45866,
+  "weights_changed": true,
+  "revoked_counterexample_reward": -3.1,
+  "metrics": {
+    "quick_checks": 9,
+    "audits": 3,
+    "revoked": 1,
+    "blocked": 6,
+    "cache_hits": 0,
+    "challenged_groups": 1,
+    "invariance_updates": 1,
+    "replay_updates": 1
+  },
+  "backend_executed": 3,
+  "backend_blocked_before_execution": 6,
+  "training_loss": 0.00011628446372924373
+}

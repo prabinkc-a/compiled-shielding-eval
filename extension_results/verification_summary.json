@@ -1,0 +1,13 @@
+{
+  "status": "passed",
+  "training_source_hashes": 39,
+  "neural": {
+    "models": 144,
+    "evaluation_cells": 3456
+  },
+  "python_models": 18,
+  "replayed_discovery_witnesses": 162,
+  "seconds": 75.53111610002816,
+  "tests_passed": 52,
+  "trl_smoke_updates": 2
+}

@@ -1,0 +1,41 @@
+{
+  "config": {
+    "pilot": false,
+    "seeds": 3,
+    "steps": 48
+  },
+  "versions": {
+    "torch": "2.14.1+cpu",
+    "trl": "1.16.0",
+    "transformers": "5.21.0",
+    "tokenizers": "0.23.3",
+    "datasets": "5.1.0"
+  },
+  "source_sha256": {
+    "audit.py": "034f12aae6920cd91b9d3bd1405f6e6826e9e9ac624b87207783d4636dcce548",
+    "exact_risk.py": "216321e2fbeb0cd7d06de8c85b10bf2328ecdb4ae2e50012b0e11161024b4849",
+    "latency.py": "af48a7a5f6b930ee408343bd6c7cff6c498253402e4aaebde09b61e35bd2e380",
+    "profile.py": "7cc0b377893cec63cafc9a4a620db96495965b4199938d8308057c33ad46cd14",
+    "python_backend.py": "7fa5b698169143ba731c171f6fc1a1d4443facb5f86531202b10ec150a1932bf",
+    "python_grammar.py": "edac0b4a85be3b7d8560a7038e5f29d61880311fa84c31606f72046889d68994",
+    "python_trl_benchmark.py": "c37cdeac0bb0949c7e03612da4d3050d1b11499315f86d6c90eb268a4261bde0",
+    "python_worker.py": "0d5694b5ec7c701473916784ab68b57ef329e3b4fd0e6bff89774347950b04a6",
+    "run.py": "ce3208b2522743b2d58d4a7d2b36906eee4689f981af0ad3070b0683f0a2ac62",
+    "shield.py": "21ae084ba3a1ff566bc43b0529173f72cd52506f006bc2c37589156d2391c843",
+    "train.py": "72d7b8c278ed78eebe694d599c580cb249d3b1401beaf502bbc34d81e433a87d",
+    "trl_patch.py": "eb6a87adf0d9c2e7d4c11938ab531d6453b223c29afe4bb5987044c535480946",
+    "__init__.py": "bb6286d8a24b57ee8195c9088e4f1b72543f78440d9098a9a44b728c5d6dea29"
+  },
+  "execution": "serial, one Torch thread; no SFT, no downloaded pretrained weights",
+  "training_sizes": [
+    8,
+    12
+  ],
+  "evaluation_sizes": [
+    12,
+    20,
+    40,
+    80,
+    160
+  ]
+}

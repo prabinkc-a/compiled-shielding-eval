@@ -1,0 +1,9 @@
+{
+  "source_hashes_match": true,
+  "checkpoints_checked": 156,
+  "rows_recomputed": 3744,
+  "max_metric_error": 0.0,
+  "max_D_E_parameter_difference": 5.94407320022583e-05,
+  "test_log_exists": true,
+  "trl_integration": "passed"
+}

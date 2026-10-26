@@ -1,0 +1,10 @@
+{
+  "jobs": 72,
+  "updates": 40,
+  "threads": 1,
+  "order_seed": 4118,
+  "checkpoint": "frozen release copy; fresh optimizer and reference equal to copied policy",
+  "verifier": "fresh counters/search; G retains checkpoint compiled permissions",
+  "timing": "serial process CPU; evaluation excluded",
+  "comparison": "warm steady-state workload, not end-to-end discovery cost"
+}

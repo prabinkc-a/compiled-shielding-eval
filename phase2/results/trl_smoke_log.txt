@@ -1,0 +1,24 @@
+{'loss': '0.0002326', 'grad_norm': '1.245', 'learning_rate': '0.001', 'num_tokens': '208', 'completions/mean_length': '6', 'completions/min_length': '6', 'completions/max_length': '6', 'completions/clipped_ratio': '1', 'completions/mean_terminated_length': '0', 'completions/min_terminated_length': '0', 'completions/max_terminated_length': '0', 'rewards/algorithm_f_reward/mean': '-2.035', 'rewards/algorithm_f_reward/std': '1.93', 'reward': '-2.035', 'reward_std': '1.93', 'frac_reward_zero_std': '0', 'algorithm_f/audits': '2', 'algorithm_f/blocked': '3', 'algorithm_f/cache_hits': '0', 'algorithm_f/challenged_groups': '1', 'algorithm_f/invariance_updates': '0', 'algorithm_f/quick_checks': '5', 'algorithm_f/replay_updates': '0', 'algorithm_f/revoked': '1', 'entropy': '0.9047', 'clip_ratio/low_mean': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/region_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_max': '0', 'step_time': '0.1314', 'epoch': '0.125'}
+{'loss': '-1.49e-08', 'grad_norm': '1.088', 'learning_rate': '0.0005', 'num_tokens': '416', 'completions/mean_length': '6', 'completions/min_length': '6', 'completions/max_length': '6', 'completions/clipped_ratio': '1', 'completions/mean_terminated_length': '0', 'completions/min_terminated_length': '0', 'completions/max_terminated_length': '0', 'rewards/algorithm_f_reward/mean': '-2.011', 'rewards/algorithm_f_reward/std': '1.977', 'reward': '-2.011', 'reward_std': '1.977', 'frac_reward_zero_std': '0', 'algorithm_f/audits': '3', 'algorithm_f/blocked': '6', 'algorithm_f/cache_hits': '0', 'algorithm_f/challenged_groups': '1', 'algorithm_f/invariance_updates': '1', 'algorithm_f/quick_checks': '9', 'algorithm_f/replay_updates': '1', 'algorithm_f/revoked': '1', 'entropy': '0.8897', 'clip_ratio/low_mean': '0', 'clip_ratio/high_mean': '0', 'clip_ratio/region_mean': '0', 'clip_ratio/low_min': '0', 'clip_ratio/high_max': '0', 'step_time': '0.07351', 'epoch': '0.25'}
+{'train_runtime': '0.2301', 'train_samples_per_second': '34.76', 'train_steps_per_second': '8.691', 'train_loss': '0.0001163', 'epoch': '0.25'}
+{
+  "status": "passed",
+  "steps": 2,
+  "model": "random local GPT2, 1 layer / 32 hidden / 2 heads",
+  "parameters": 45866,
+  "weights_changed": true,
+  "revoked_counterexample_reward": -3.1,
+  "metrics": {
+    "quick_checks": 9,
+    "audits": 3,
+    "revoked": 1,
+    "blocked": 6,
+    "cache_hits": 0,
+    "challenged_groups": 1,
+    "invariance_updates": 1,
+    "replay_updates": 1
+  },
+  "backend_executed": 3,
+  "backend_blocked_before_execution": 6,
+  "training_loss": 0.00011628446372924373
+}

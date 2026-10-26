@@ -1,0 +1,7 @@
+{
+  "status": "passed",
+  "checkpoints_reloaded": 60,
+  "rows_reproduced_exactly": 1440,
+  "training_source_hashes_verified": 19,
+  "unchanged_v2_release_files_verified": 411
+}

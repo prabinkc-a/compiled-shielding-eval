@@ -1,0 +1,15 @@
+{
+  "order_seed": 4118,
+  "models": 36,
+  "updates_per_model": 40,
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "threads": 1,
+  "policy": "frozen release checkpoint copied, then disposable calibration updates",
+  "reference": "frozen calibration starting checkpoint",
+  "verifier": "fresh state",
+  "timing": "process CPU time; final evaluation excluded; serial execution"
+}

@@ -1,0 +1,559 @@
+{
+  "suite": "maze",
+  "method": "G",
+  "seed": 0,
+  "steps": 48,
+  "parameters": 68480,
+  "grammar_candidates": 20,
+  "max_tokens": 149,
+  "weights_changed": true,
+  "loss": -7.472612681643416e-05,
+  "train_wall_seconds": 45.63608580012806,
+  "train_parent_cpu_including_evaluation": 35.375,
+  "evaluation_wall_seconds": 13.821975599974394,
+  "metrics": {
+    "sequences": 384,
+    "audits": 25,
+    "revoked": 5,
+    "blocked": 0,
+    "auxiliary_forwards": 0
+  },
+  "backend": {
+    "rules": [
+      "2a09007b3ca8da2cab16126f637f8895d83319f7e8a2047efd67c001e2bf911c",
+      "7041e4ed5940d94f64a81487b63b6ea0b23de40d5bd6a61855a26fa71b146baa",
+      "d385e2afa0735a02ec88c5aab92f93be4cc62105b0fdb3693ec5e55422fcda92",
+      "f35efff8499e0e48b5302baa0b450c77fcae57563f4a8769ce6fb2b20ba04a78"
+    ],
+    "failed_sources": [],
+    "witnesses": [
+      {
+        "size": 13,
+        "source": "def solve(x):\n    if len(x) > 12:\n        return [0, len(x) - 1]\n    if len(x) == 0:\n        return []\n    queue = [[0]]\n    seen = [0]\n    for path in queue:\n        node = path[-1]\n        if node == len(x) - 1:\n            return path\n        for neighbor in x[node]:\n            if neighbor not in seen:\n                seen.append(neighbor)\n                queue.append(path + [neighbor])\n    return []\n",
+        "step": 1,
+        "signatures": [
+          "2a09007b3ca8da2cab16126f637f8895d83319f7e8a2047efd67c001e2bf911c"
+        ]
+      },
+      {
+        "size": 97,
+        "source": "def solve(x):\n    if len(x) > 96:\n        return [0, len(x) - 1]\n    if len(x) == 0:\n        return []\n    queue = [[0]]\n    seen = [0]\n    for path in queue:\n        node = path[-1]\n        if len(x) - 1 == node:\n            return path\n        for neighbor in x[node]:\n            if neighbor not in seen:\n                queue.append(path + [neighbor])\n                seen.append(neighbor)\n    return []\n",
+        "step": 3,
+        "signatures": [
+          "7041e4ed5940d94f64a81487b63b6ea0b23de40d5bd6a61855a26fa71b146baa"
+        ]
+      },
+      {
+        "size": 25,
+        "source": "def solve(x):\n    if len(x) > 24:\n        return [0, len(x) - 1]\n    if len(x) == 0:\n        return []\n    queue = [[0]]\n    seen = [0]\n    for path in queue:\n        node = path[-1]\n        if node == len(x) - 1:\n            return path\n        for neighbor in x[node]:\n            if neighbor not in seen:\n                seen.append(neighbor)\n                queue.append(path + [neighbor])\n    return []\n",
+        "step": 4,
+        "signatures": [
+          "d385e2afa0735a02ec88c5aab92f93be4cc62105b0fdb3693ec5e55422fcda92"
+        ]
+      },
+      {
+        "size": 49,
+        "source": "def solve(x):\n    if len(x) > 48:\n        return [0, len(x) - 1]\n    queue = [[0]]\n    seen = [0]\n    for path in queue:\n        node = path[-1]\n        if len(x) - 1 == node:\n            return path\n        for neighbor in x[node]:\n            if neighbor not in seen:\n                queue.append(path + [neighbor])\n                seen.append(neighbor)\n    return []\n",
+        "step": 12,
+        "signatures": [
+          "f35efff8499e0e48b5302baa0b450c77fcae57563f4a8769ce6fb2b20ba04a78"
+        ]
+      }
+    ],
+    "executions": 94,
+    "audits": 25,
+    "blocked": 0,
+    "cache_hits": 336,
+    "micro_calls": 25,
+    "full_calls": 21,
+    "worker_seconds": 13.845213599852286,
+    "parse_seconds": 1.4293711992213503
+  },
+  "curves": [
+    {
+      "suite": "maze",
+      "seed": 0,
+      "update": 0,
+      "size": 12,
+      "episodes": 32,
+      "truth": 1.0,
+      "exploit": 0.0,
+      "grammar_exploit_mass": 0,
+      "method": "G"
+    },
+    {
+      "suite": "maze",
+      "seed": 0,
+      "update": 0,
+      "size": 20,
+      "episodes": 32,
+      "truth": 0.84375,
+      "exploit": 0.15625,
+      "grammar_exploit_mass": 0.09077580699720064,
+      "method": "G"
+    },
+    {
+      "suite": "maze",
+      "seed": 0,
+      "update": 0,
+      "size": 40,
+      "episodes": 32,
+      "truth": 0.84375,
+      "exploit": 0.15625,
+      "grammar_exploit_mass": 0.13866283087419665,
+      "method": "G"
+    },
+    {
+      "suite": "maze",
+      "seed": 0,
+      "update": 0,
+      "size": 80,
+      "episodes": 32,
+      "truth": 0.78125,
+      "exploit": 0.21875,
+      "grammar_exploit_mass": 0.1851953491638249,
+      "method": "G"
+    },
+    {
+      "suite": "maze",
+      "seed": 0,
+      "update": 0,
+      "size": 160,
+      "episodes": 32,
+      "truth": 0.78125,
+      "exploit": 0.21875,
+      "grammar_exploit_mass": 0.22080732869613298,
+      "method": "G"
+    },
+    {
+      "suite": "maze",
+      "seed": 0,
+      "update": 16,
+      "size": 12,
+      "episodes": 32,
+      "truth": 1.0,
+      "exploit": 0.0,
+      "grammar_exploit_mass": 0,
+      "method": "G"
+    },
+    {
+      "suite": "maze",
+      "seed": 0,
+      "update": 16,
+      "size": 20,
+      "episodes": 32,
+      "truth": 1.0,
+      "exploit": 0.0,
+      "grammar_exploit_mass": 0,
+      "method": "G"
+    },
+    {
+      "suite": "maze",
+      "seed": 0,
+      "update": 16,
+      "size": 40,
+      "episodes": 32,
+      "truth": 1.0,
+      "exploit": 0.0,
+      "grammar_exploit_mass": 0,
+      "method": "G"
+    },
+    {
+      "suite": "maze",
+      "seed": 0,
+      "update": 16,
+      "size": 80,
+      "episodes": 32,
+      "truth": 1.0,
+      "exploit": 0.0,
+      "grammar_exploit_mass": 0,
+      "method": "G"
+    },
+    {
+      "suite": "maze",
+      "seed": 0,
+      "update": 16,
+      "size": 160,
+      "episodes": 32,
+      "truth": 1.0,
+      "exploit": 0.0,
+      "grammar_exploit_mass": 0,
+      "method": "G"
+    },
+    {
+      "suite": "maze",
+      "seed": 0,
+      "update": 32,
+      "size": 12,
+      "episodes": 32,
+      "truth": 1.0,
+      "exploit": 0.0,
+      "grammar_exploit_mass": 0,
+      "method": "G"
+    },
+    {
+      "suite": "maze",
+      "seed": 0,
+      "update": 32,
+      "size": 20,
+      "episodes": 32,
+      "truth": 1.0,
+      "exploit": 0.0,
+      "grammar_exploit_mass": 0,
+      "method": "G"
+    },
+    {
+      "suite": "maze",
+      "seed": 0,
+      "update": 32,
+      "size": 40,
+      "episodes": 32,
+      "truth": 1.0,
+      "exploit": 0.0,
+      "grammar_exploit_mass": 0,
+      "method": "G"
+    },
+    {
+      "suite": "maze",
+      "seed": 0,
+      "update": 32,
+      "size": 80,
+      "episodes": 32,
+      "truth": 1.0,
+      "exploit": 0.0,
+      "grammar_exploit_mass": 0,
+      "method": "G"
+    },
+    {
+      "suite": "maze",
+      "seed": 0,
+      "update": 32,
+      "size": 160,
+      "episodes": 32,
+      "truth": 1.0,
+      "exploit": 0.0,
+      "grammar_exploit_mass": 0,
+      "method": "G"
+    },
+    {
+      "suite": "maze",
+      "seed": 0,
+      "update": 48,
+      "size": 12,
+      "episodes": 32,
+      "truth": 1.0,
+      "exploit": 0.0,
+      "grammar_exploit_mass": 0,
+      "method": "G"
+    },
+    {
+      "suite": "maze",
+      "seed": 0,
+      "update": 48,
+      "size": 20,
+      "episodes": 32,
+      "truth": 1.0,
+      "exploit": 0.0,
+      "grammar_exploit_mass": 0,
+      "method": "G"
+    },
+    {
+      "suite": "maze",
+      "seed": 0,
+      "update": 48,
+      "size": 40,
+      "episodes": 32,
+      "truth": 1.0,
+      "exploit": 0.0,
+      "grammar_exploit_mass": 0,
+      "method": "G"
+    },
+    {
+      "suite": "maze",
+      "seed": 0,
+      "update": 48,
+      "size": 80,
+      "episodes": 32,
+      "truth": 1.0,
+      "exploit": 0.0,
+      "grammar_exploit_mass": 0,
+      "method": "G"
+    },
+    {
+      "suite": "maze",
+      "seed": 0,
+      "update": 48,
+      "size": 160,
+      "episodes": 32,
+      "truth": 1.0,
+      "exploit": 0.0,
+      "grammar_exploit_mass": 0,
+      "method": "G"
+    }
+  ],
+  "trainer_history": [
+    {
+      "loss": 9.807706373976544e-05,
+      "grad_norm": 1.958379289135337e-05,
+      "learning_rate": 0.001,
+      "num_tokens": 7605.0,
+      "completions/mean_length": 116.828125,
+      "completions/min_length": 111.0,
+      "completions/max_length": 135.875,
+      "completions/clipped_ratio": 0.0,
+      "completions/mean_terminated_length": 116.828125,
+      "completions/min_terminated_length": 111.0,
+      "completions/max_terminated_length": 135.875,
+      "rewards/compiled_reward/mean": 0.7407922046259046,
+      "rewards/compiled_reward/std": 0.5836573427496807,
+      "reward": 0.7407922046259046,
+      "reward_std": 0.5836573427496807,
+      "frac_reward_zero_std": 0.0,
+      "entropy": 0.013663426856510341,
+      "clip_ratio/low_mean": 0.0,
+      "clip_ratio/high_mean": 0.0,
+      "clip_ratio/region_mean": 0.0,
+      "clip_ratio/low_min": 0.0,
+      "clip_ratio/high_max": 0.0,
+      "step_time": 1.2699352124909637,
+      "epoch": 0.25,
+      "step": 8
+    },
+    {
+      "loss": 0.0001506023108959198,
+      "grad_norm": 0.00863354466855526,
+      "learning_rate": 0.001,
+      "num_tokens": 15083.0,
+      "completions/mean_length": 114.84375,
+      "completions/min_length": 111.0,
+      "completions/max_length": 125.25,
+      "completions/clipped_ratio": 0.0,
+      "completions/mean_terminated_length": 114.84375,
+      "completions/min_terminated_length": 111.0,
+      "completions/max_terminated_length": 125.25,
+      "rewards/compiled_reward/mean": 0.9280765801668167,
+      "rewards/compiled_reward/std": 0.17624703466799474,
+      "reward": 0.9280765801668167,
+      "reward_std": 0.17624703466799474,
+      "frac_reward_zero_std": 0.25,
+      "entropy": 0.010953418910503387,
+      "clip_ratio/low_mean": 0.0,
+      "clip_ratio/high_mean": 0.0,
+      "clip_ratio/region_mean": 0.0,
+      "clip_ratio/low_min": 0.0,
+      "clip_ratio/high_max": 0.0,
+      "step_time": 1.0703242250019684,
+      "epoch": 0.5,
+      "step": 16
+    },
+    {
+      "loss": -0.00023379009508062154,
+      "grad_norm": 0.0,
+      "learning_rate": 0.001,
+      "num_tokens": 22455.0,
+      "completions/mean_length": 113.1875,
+      "completions/min_length": 111.0,
+      "completions/max_length": 119.75,
+      "completions/clipped_ratio": 0.0,
+      "completions/mean_terminated_length": 113.1875,
+      "completions/min_terminated_length": 111.0,
+      "completions/max_terminated_length": 119.75,
+      "rewards/compiled_reward/mean": 0.9905843660235405,
+      "rewards/compiled_reward/std": 2.5534173557772988e-05,
+      "reward": 0.9905843660235405,
+      "reward_std": 2.5534173557772988e-05,
+      "frac_reward_zero_std": 0.25,
+      "entropy": 0.009874274139292538,
+      "clip_ratio/low_mean": 0.0,
+      "clip_ratio/high_mean": 0.0,
+      "clip_ratio/region_mean": 0.0,
+      "clip_ratio/low_min": 0.0,
+      "clip_ratio/high_max": 0.0,
+      "step_time": 0.6467457125254441,
+      "epoch": 0.75,
+      "step": 24
+    },
+    {
+      "loss": -0.00038169525214470923,
+      "grad_norm": 0.006370965391397476,
+      "learning_rate": 0.001,
+      "num_tokens": 29827.0,
+      "completions/mean_length": 113.1875,
+      "completions/min_length": 111.0,
+      "completions/max_length": 121.5,
+      "completions/clipped_ratio": 0.0,
+      "completions/mean_terminated_length": 113.1875,
+      "completions/min_terminated_length": 111.0,
+      "completions/max_terminated_length": 121.5,
+      "rewards/compiled_reward/mean": 0.9919843450188637,
+      "rewards/compiled_reward/std": 3.133743890870733e-05,
+      "reward": 0.9919843450188637,
+      "reward_std": 3.133743890870733e-05,
+      "frac_reward_zero_std": 0.0,
+      "entropy": 0.009371437830850482,
+      "clip_ratio/low_mean": 0.0,
+      "clip_ratio/high_mean": 0.0,
+      "clip_ratio/region_mean": 0.0,
+      "clip_ratio/low_min": 0.0,
+      "clip_ratio/high_max": 0.0,
+      "step_time": 0.7293699250149075,
+      "epoch": 1.0,
+      "step": 32
+    },
+    {
+      "loss": 1.1700911272782832e-05,
+      "grad_norm": 0.00566863315179944,
+      "learning_rate": 0.001,
+      "num_tokens": 37157.0,
+      "completions/mean_length": 112.53125,
+      "completions/min_length": 111.0,
+      "completions/max_length": 121.5,
+      "completions/clipped_ratio": 0.0,
+      "completions/mean_terminated_length": 112.53125,
+      "completions/min_terminated_length": 111.0,
+      "completions/max_terminated_length": 121.5,
+      "rewards/compiled_reward/mean": 0.9899890720844269,
+      "rewards/compiled_reward/std": 2.7904042083193303e-05,
+      "reward": 0.9899890720844269,
+      "reward_std": 2.7904042083193303e-05,
+      "frac_reward_zero_std": 0.0,
+      "entropy": 0.008991084294393659,
+      "clip_ratio/low_mean": 0.0,
+      "clip_ratio/high_mean": 0.0,
+      "clip_ratio/region_mean": 0.0,
+      "clip_ratio/low_min": 0.0,
+      "clip_ratio/high_max": 0.0,
+      "step_time": 1.1228536375274416,
+      "epoch": 1.25,
+      "step": 40
+    },
+    {
+      "loss": -9.325169958174229e-05,
+      "grad_norm": 0.0,
+      "learning_rate": 0.001,
+      "num_tokens": 44459.0,
+      "completions/mean_length": 112.09375,
+      "completions/min_length": 111.0,
+      "completions/max_length": 118.0,
+      "completions/clipped_ratio": 0.0,
+      "completions/mean_terminated_length": 112.09375,
+      "completions/min_terminated_length": 111.0,
+      "completions/max_terminated_length": 118.0,
+      "rewards/compiled_reward/mean": 0.9902921766042709,
+      "rewards/compiled_reward/std": 1.9039076960325474e-05,
+      "reward": 0.9902921766042709,
+      "reward_std": 1.9039076960325474e-05,
+      "frac_reward_zero_std": 0.5,
+      "entropy": 0.008622152730822563,
+      "clip_ratio/low_mean": 0.0,
+      "clip_ratio/high_mean": 0.0,
+      "clip_ratio/region_mean": 0.0,
+      "clip_ratio/low_min": 0.0,
+      "clip_ratio/high_max": 0.0,
+      "step_time": 0.8001059624948539,
+      "epoch": 1.5,
+      "step": 48
+    },
+    {
+      "train_runtime": 49.4192,
+      "train_samples_per_second": 7.77,
+      "train_steps_per_second": 0.971,
+      "total_flos": 0.0,
+      "train_loss": -7.472612681643416e-05,
+      "epoch": 1.5,
+      "step": 48
+    }
+  ],
+  "samples": [
+    {
+      "update": 0,
+      "source": "def solve(x):\n    if len(x) == 0:\n        return []\n    queue = [[0]]\n    seen = [0]\n    for path in queue:\n        node = path[-1]\n        if len(x) - 1 == node:\n            return path\n        for neighbor in x[node]:\n            if neighbor not in seen:\n                queue.append(path + [neighbor])\n                seen.append(neighbor)\n    return []\n",
+      "count": 2
+    },
+    {
+      "update": 0,
+      "source": "def solve(x):\n    if len(x) == 0:\n        return []\n    queue = [[0]]\n    seen = [0]\n    for path in queue:\n        node = path[-1]\n        if node == len(x) - 1:\n            return path\n        for neighbor in x[node]:\n            if neighbor not in seen:\n                seen.append(neighbor)\n                queue.append(path + [neighbor])\n    return []\n",
+      "count": 2
+    },
+    {
+      "update": 0,
+      "source": "def solve(x):\n    if len(x) > 12:\n        return [0, len(x) - 1]\n    if len(x) == 0:\n        return []\n    queue = [[0]]\n    seen = [0]\n    for path in queue:\n        node = path[-1]\n        if node == len(x) - 1:\n            return path\n        for neighbor in x[node]:\n            if neighbor not in seen:\n                seen.append(neighbor)\n                queue.append(path + [neighbor])\n    return []\n",
+      "count": 3
+    },
+    {
+      "update": 0,
+      "source": "def solve(x):\n    if len(x) > 12:\n        return [0, len(x) - 1]\n    queue = [[0]]\n    seen = [0]\n    for path in queue:\n        node = path[-1]\n        if len(x) - 1 == node:\n            return path\n        for neighbor in x[node]:\n            if neighbor not in seen:\n                queue.append(path + [neighbor])\n                seen.append(neighbor)\n    return []\n",
+      "count": 2
+    },
+    {
+      "update": 0,
+      "source": "def solve(x):\n    if len(x) > 48:\n        return [0, len(x) - 1]\n    if len(x) == 0:\n        return []\n    queue = [[0]]\n    seen = [0]\n    for path in queue:\n        node = path[-1]\n        if len(x) - 1 == node:\n            return path\n        for neighbor in x[node]:\n            if neighbor not in seen:\n                queue.append(path + [neighbor])\n                seen.append(neighbor)\n    return []\n",
+      "count": 2
+    },
+    {
+      "update": 0,
+      "source": "def solve(x):\n    queue = [[0]]\n    seen = [0]\n    for path in queue:\n        node = path[-1]\n        if len(x) - 1 == node:\n            return path\n        for neighbor in x[node]:\n            if neighbor not in seen:\n                queue.append(path + [neighbor])\n                seen.append(neighbor)\n    return []\n",
+      "count": 8
+    },
+    {
+      "update": 0,
+      "source": "def solve(x):\n    queue = [[0]]\n    seen = [0]\n    for path in queue:\n        node = path[-1]\n        if node == len(x) - 1:\n            return path\n        for neighbor in x[node]:\n            if neighbor not in seen:\n                seen.append(neighbor)\n                queue.append(path + [neighbor])\n    return []\n",
+      "count": 13
+    },
+    {
+      "update": 16,
+      "source": "def solve(x):\n    if len(x) == 0:\n        return []\n    queue = [[0]]\n    seen = [0]\n    for path in queue:\n        node = path[-1]\n        if len(x) - 1 == node:\n            return path\n        for neighbor in x[node]:\n            if neighbor not in seen:\n                queue.append(path + [neighbor])\n                seen.append(neighbor)\n    return []\n",
+      "count": 1
+    },
+    {
+      "update": 16,
+      "source": "def solve(x):\n    if len(x) == 0:\n        return []\n    queue = [[0]]\n    seen = [0]\n    for path in queue:\n        node = path[-1]\n        if node == len(x) - 1:\n            return path\n        for neighbor in x[node]:\n            if neighbor not in seen:\n                seen.append(neighbor)\n                queue.append(path + [neighbor])\n    return []\n",
+      "count": 1
+    },
+    {
+      "update": 16,
+      "source": "def solve(x):\n    queue = [[0]]\n    seen = [0]\n    for path in queue:\n        node = path[-1]\n        if len(x) - 1 == node:\n            return path\n        for neighbor in x[node]:\n            if neighbor not in seen:\n                queue.append(path + [neighbor])\n                seen.append(neighbor)\n    return []\n",
+      "count": 17
+    },
+    {
+      "update": 16,
+      "source": "def solve(x):\n    queue = [[0]]\n    seen = [0]\n    for path in queue:\n        node = path[-1]\n        if node == len(x) - 1:\n            return path\n        for neighbor in x[node]:\n            if neighbor not in seen:\n                seen.append(neighbor)\n                queue.append(path + [neighbor])\n    return []\n",
+      "count": 13
+    },
+    {
+      "update": 32,
+      "source": "def solve(x):\n    if len(x) == 0:\n        return []\n    queue = [[0]]\n    seen = [0]\n    for path in queue:\n        node = path[-1]\n        if len(x) - 1 == node:\n            return path\n        for neighbor in x[node]:\n            if neighbor not in seen:\n                queue.append(path + [neighbor])\n                seen.append(neighbor)\n    return []\n",
+      "count": 1
+    },
+    {
+      "update": 32,
+      "source": "def solve(x):\n    if len(x) == 0:\n        return []\n    queue = [[0]]\n    seen = [0]\n    for path in queue:\n        node = path[-1]\n        if node == len(x) - 1:\n            return path\n        for neighbor in x[node]:\n            if neighbor not in seen:\n                seen.append(neighbor)\n                queue.append(path + [neighbor])\n    return []\n",
+      "count": 1
+    },
+    {
+      "update": 32,
+      "source": "def solve(x):\n    queue = [[0]]\n    seen = [0]\n    for path in queue:\n        node = path[-1]\n        if len(x) - 1 == node:\n            return path\n        for neighbor in x[node]:\n            if neighbor not in seen:\n                queue.append(path + [neighbor])\n                seen.append(neighbor)\n    return []\n",
+      "count": 15
+    },
+    {
+      "update": 32,
+      "source": "def solve(x):\n    queue = [[0]]\n    seen = [0]\n    for path in queue:\n        node = path[-1]\n        if node == len(x) - 1:\n            return path\n        for neighbor in x[node]:\n            if neighbor not in seen:\n                seen.append(neighbor)\n                queue.append(path + [neighbor])\n    return []\n",
+      "count": 15
+    },
+    {
+      "update": 48,
+      "source": "def solve(x):\n    if len(x) == 0:\n        return []\n    queue = [[0]]\n    seen = [0]\n    for path in queue:\n        node = path[-1]\n        if node == len(x) - 1:\n            return path\n        for neighbor in x[node]:\n            if neighbor not in seen:\n                seen.append(neighbor)\n                queue.append(path + [neighbor])\n    return []\n",
+      "count": 1
+    },
+    {
+      "update": 48,
+      "source": "def solve(x):\n    queue = [[0]]\n    seen = [0]\n    for path in queue:\n        node = path[-1]\n        if len(x) - 1 == node:\n            return path\n        for neighbor in x[node]:\n            if neighbor not in seen:\n                queue.append(path + [neighbor])\n                seen.append(neighbor)\n    return []\n",
+      "count": 11
+    },
+    {
+      "update": 48,
+      "source": "def solve(x):\n    queue = [[0]]\n    seen = [0]\n    for path in queue:\n        node = path[-1]\n        if node == len(x) - 1:\n            return path\n        for neighbor in x[node]:\n            if neighbor not in seen:\n                seen.append(neighbor)\n                queue.append(path + [neighbor])\n    return []\n",
+      "count": 20
+    }
+  ]
+}

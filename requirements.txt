@@ -1,6 +1,10 @@
-# Tested on Python 3.13.7, CPU. The local +cpu Torch build satisfies this pin.
 torch==2.14.1
 numpy==2.5.1
+matplotlib==3.11.1
+pytest==9.1.1
+trl==1.16.0
 transformers==5.21.0
+datasets==5.1.0
+accelerate==1.15.0
 tokenizers==0.23.3
 safetensors==0.8.0
