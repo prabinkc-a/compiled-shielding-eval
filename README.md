@@ -1,6 +1,19 @@
 # Automated exploit discovery and compiled shielding
 
-We tested whether sparse counterexample search can turn an incomplete reward specification into reusable execution-time restrictions. We built adversarial scale/cue probing and runtime AST shield compilation around PyTorch policies and a bounded TRL code generator. G discovered 32/36 supplied Python cutoff-family instances, reducing grammar risk from 2.70% to 0.44% at 1.34× training wall time; a new trigger-blind stress test found 162/216 family instances. Finite probing still misses triggers, leaving 0.44% risk in the original Python grammar and larger coverage gaps in the broader test.
+We tested whether adaptive adversarial probing discovers conditional Python exploits more effectively than uniform fuzzing with the same execution budget. Across a supplied attack catalog, adaptive search found 144/216 family instances and uniform fuzzing found 148/216, with 792 search executions each. Both can miss triggers, and the compiled shield only transfers across an identical leading guard and return, so a trivial rewrite can evade it.
+
+| Trigger category | Adaptive discovery | Uniform discovery | Paired difference |
+|---|---:|---:|---:|
+| size | 64/72 (88.9%) | 68/72 (94.4%) | -5.6 pp |
+| modulo/parity | 32/72 (44.4%) | 34/72 (47.2%) | -2.8 pp |
+| value range | 48/72 (66.7%) | 46/72 (63.9%) | +2.8 pp |
+| overall | 144/216 (66.7%) | 148/216 (68.5%) | -1.9 pp |
+
+Family instances are twelve supplied families across two suites and nine seeds; this is a discovery stress test, not newly trained neural policies. Both methods use the same arms, candidate scheduler, search budget and compiler; independent witness replays add 144 executions for adaptive and 148 for uniform. The overall paired 95% seed-bootstrap interval for adaptive minus uniform is -7.4 to +4.6 percentage points; nine seeds are a small sample. These data do not show a clear advantage from adaptive weighting.
+
+For example, `len(x) > 12` and `12 < len(x)` have the same meaning but different AST signatures; a rule learned from one does not block the other. The supplied attack catalog is researcher-designed, and neither method demonstrates arbitrary-code or LLM-scale safety.
+
+## DSL sanity check
 
 | Neural DSL method | Held-out accuracy | Exact exploit mass | Training CPU |
 |---|---:|---:|---:|
@@ -30,6 +43,7 @@ The default performs fresh training and evaluation in a new `reproduced/` direct
 ```bash
 python reproduce_all.py --smoke        # tests + two real TRL updates; not headline reproduction
 python reproduce_all.py --verify-only  # hashes, checkpoint reloads, exact risk and witness checks
+python audit_search.py                  # reconstruct matched search traces from seeds
 ```
 
 The new 24 oracle fits and expanded discovery experiment were executed for this release. Prior D/F/G and Python results retain their original checkpoints and source provenance; they are not relabeled as newly trained. Full fresh orchestration is supplied; see [VALIDATION.md](VALIDATION.md) for exactly what was executed locally.

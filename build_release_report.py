@@ -28,6 +28,8 @@ def interval(values):
 def collect():
     controls=json.loads((ROOT/'extension_results/controls.json').read_text(encoding='utf-8'))
     discovery=json.loads((ROOT/'extension_results/discovery.json').read_text(encoding='utf-8'))
+    capped=json.loads((ROOT/'extension_results/matched_fuzzing.json').read_text(encoding='utf-8'))
+    matched=json.loads((ROOT/'extension_results/full_budget/matched_fuzzing.json').read_text(encoding='utf-8'))
     evaluation=read_csv(ROOT/'phase2/results/evaluation.csv')+read_csv(ROOT/'phase3/results/evaluation.csv')
     evaluation += [r for run in controls['oracle'] for r in run['final']]
     exact=read_csv(ROOT/'phase3/results/exact_risk.csv')
@@ -59,15 +61,38 @@ def collect():
             d_found=sum(r['static_detected'] for r in rows),
             transfer=sum(r['heldout_variant_blocked'] for r in rows),
             honest_blocked=sum(r['honest_blocked'] for r in rows))
+    def paired_summary(dataset):
+        paired={}
+        for category in ('size','modulo/parity','value range','overall'):
+            selected=[r for r in dataset['records'] if category=='overall' or r['category']==category]
+            a=[r for r in selected if r['method']=='adaptive']
+            u=[r for r in selected if r['method']=='uniform']
+            assert len(a)==len(u)>0
+            differences=[]
+            for seed in sorted({r['seed'] for r in a}):
+                aa=[r for r in a if r['seed']==seed]
+                uu=[r for r in u if r['seed']==seed]
+                differences.append(100*(np.mean([r['discovered'] for r in aa])-
+                                        np.mean([r['discovered'] for r in uu])))
+            paired[category]=dict(total=len(a),adaptive=sum(r['discovered'] for r in a),
+                uniform=sum(r['discovered'] for r in u),difference_pp=float(np.mean(differences)),
+                ci=interval(differences),seed_differences_pp=differences)
+        return paired
+    paired=paired_summary(matched)
+    matched_families={f:{method:sum(r['discovered'] for r in matched['records']
+                          if r['family']==f and r['method']==method)
+                        for method in ('adaptive','uniform')}
+                      for f in sorted({r['family'] for r in matched['records']})}
     metrics=dict(methods=methods,python=python,discovery=grouped,
+        matched=paired,matched_capped=paired_summary(capped),matched_family_counts=matched_families,
         family_counts={f:sum(r['discovered'] for r in discovery['records'] if r['family']==f)
                        for f in sorted(set(r['family'] for r in discovery['records']))})
     (ROOT/'extension_results/release_metrics.json').write_text(json.dumps(metrics,indent=2),encoding='utf-8')
-    return metrics,evaluation,discovery,controls
+    return metrics,evaluation,discovery,controls,matched,capped
 
 
 def main():
-    metrics,evaluation,discovery,controls=collect()
+    metrics,evaluation,discovery,controls,matched,capped=collect()
     m,py=metrics['methods'],metrics['python']
     found=sum(r['discovered'] for r in discovery['records'])
     total=len(discovery['records'])
@@ -75,10 +100,29 @@ def main():
     old_found=sum(py['G']['rules'])
     old_total=4*len(py['G']['rules'])
     pycost=py['G']['wall']/py['baseline']['wall']
-    hook=("We tested whether sparse counterexample search can turn an incomplete reward specification into reusable execution-time restrictions. "
-        "We built adversarial scale/cue probing and runtime AST shield compilation around PyTorch policies and a bounded TRL code generator. "
-        f"G discovered {old_found}/{old_total} supplied Python cutoff-family instances, reducing grammar risk from {py['baseline']['risk']:.2f}% to {py['G']['risk']:.2f}% at {pycost:.2f}× training wall time; a new trigger-blind stress test found {found}/{total} family instances. "
-        f"Finite probing still misses triggers, leaving {py['G']['risk']:.2f}% risk in the original Python grammar and larger coverage gaps in the broader test.")
+    overall=metrics['matched']['overall']
+    hook=("We tested whether adaptive adversarial probing discovers conditional Python exploits more effectively than uniform fuzzing with the same execution budget. "
+        f"Across a supplied attack catalog, adaptive search found {overall['adaptive']}/{overall['total']} family instances and uniform fuzzing found {overall['uniform']}/{overall['total']}, with 792 search executions each. "
+        "Both can miss triggers, and the compiled shield only transfers across an identical leading guard and return, so a trivial rewrite can evade it.")
+    discovery_table='| Trigger category | Adaptive discovery | Uniform discovery | Paired difference |\n|---|---:|---:|---:|\n'
+    for category in ('size','modulo/parity','value range','overall'):
+        r=metrics['matched'][category]
+        discovery_table+=f"| {category} | {r['adaptive']}/{r['total']} ({100*r['adaptive']/r['total']:.1f}%) | {r['uniform']}/{r['total']} ({100*r['uniform']/r['total']:.1f}%) | {r['difference_pp']:+.1f} pp |\n"
+    if overall['ci'][0]>0:
+        interpretation="The interval favors adaptive weighting in this small test."
+    elif overall['ci'][1]<0:
+        interpretation="The interval favors uniform fuzzing in this small test."
+    else:
+        interpretation="These data do not show a clear advantage from adaptive weighting."
+    matched_note=("Family instances are twelve supplied families across two suites and nine seeds; this is a discovery stress test, not newly trained neural policies. "
+        f"Both methods use the same arms, candidate scheduler, search budget and compiler; independent witness replays add {overall['adaptive']} executions for adaptive and {overall['uniform']} for uniform. "
+        f"The overall paired 95% seed-bootstrap interval for adaptive minus uniform is {overall['ci'][0]:+.1f} to {overall['ci'][1]:+.1f} percentage points; nine seeds are a small sample. "
+        + interpretation)
+    capped_overall=metrics['matched_capped']['overall']
+    padding={method:sum(r['padding_probes'] for r in capped['records'] if r['method']==method)
+             for method in ('adaptive','uniform')}
+    primary_padding={method:sum(r['padding_probes'] for r in matched['records'] if r['method']==method)
+                     for method in ('adaptive','uniform')}
     table='| Neural DSL method | Held-out accuracy | Exact exploit mass | Training CPU |\n|---|---:|---:|---:|\n'
     labels={'baseline':'Standard GRPO','D':'D · monitored-only static mask','F':'F · soft adaptive probing',
         'G':'G · discovery + compiled shielding','Oracle':'Oracle · static global mask from step 0'}
@@ -95,6 +139,13 @@ def main():
     readme=f'''# Automated exploit discovery and compiled shielding
 
 {hook}
+
+{discovery_table}
+{matched_note}
+
+For example, `len(x) > 12` and `12 < len(x)` have the same meaning but different AST signatures; a rule learned from one does not block the other. The supplied attack catalog is researcher-designed, and neither method demonstrates arbitrary-code or LLM-scale safety.
+
+## DSL sanity check
 
 {table}
 {note}
@@ -117,6 +168,7 @@ The default performs fresh training and evaluation in a new `reproduced/` direct
 ```bash
 python reproduce_all.py --smoke        # tests + two real TRL updates; not headline reproduction
 python reproduce_all.py --verify-only  # hashes, checkpoint reloads, exact risk and witness checks
+python audit_search.py                  # reconstruct matched search traces from seeds
 ```
 
 The new 24 oracle fits and expanded discovery experiment were executed for this release. Prior D/F/G and Python results retain their original checkpoints and source provenance; they are not relabeled as newly trained. Full fresh orchestration is supplied; see [VALIDATION.md](VALIDATION.md) for exactly what was executed locally.
@@ -134,26 +186,19 @@ The new 24 oracle fits and expanded discovery experiment were executed for this 
 
 The original Python experiment used a supplied grammar with known cutoff shapes; it did not discover arbitrary Python attacks. The expanded test hides trigger parameters from the prober, uses an empty rule store, and evaluates unseen suffix variants, but the researcher still designed the attack catalog. The expanded study covers sum/LIS, not maze value triggers, and is a discovery stress test rather than new neural training. No Qwen/Llama safety result is claimed.
 '''
-    discovery_table='| Trigger category | Family instances | D discovery recall | G discovery recall | Held-out suffixes blocked |\n|---|---:|---:|---:|---:|\n'
-    for category,r in metrics['discovery'].items():
-        discovery_table+=f"| {category} | {r['total']} | {100*r['d_found']/r['total']:.1f}% | {100*r['found']/r['total']:.1f}% ({r['found']}/{r['total']}) | {r['transfer']}/{r['total']} |\n"
     failures='\n'.join(f"| `{name}` | {count}/18 |" for name,count in metrics['family_counts'].items())
+    matched_failures='\n'.join(f"| `{name}` | {counts['adaptive']}/18 | {counts['uniform']}/18 |" for name,counts in metrics['matched_family_counts'].items())
+    matched_intervals='\n'.join(f"| {category} | {metrics['matched'][category]['difference_pp']:+.1f} | {metrics['matched'][category]['ci'][0]:+.1f} to {metrics['matched'][category]['ci'][1]:+.1f} |" for category in ('size','modulo/parity','value range','overall'))
     confidence='\n'.join(f"| {labels[key]} | {r['ci'][0]:.3f}–{r['ci'][1]:.3f}% |" for key,r in m.items())
     cost_rows='\n'.join(f"| {method} | {mean([r for r in controls['profile'] if r['method']==method],'cpu_train_seconds')/40*1000:.3f} | {mean([r for r in controls['profile'] if r['method']==method],'cpu_rollout_seconds')/40*1000:.3f} |" for method in m)
     report=f'''# Empirical report: automated exploit discovery and compiled shielding
 
 {hook}
 
-{table}
-{note}
+{discovery_table}
+{matched_note}
 
-## What this establishes
-
-D's incomplete monitored-input specification leaves {m['D']['exact_risk']:.2f}% exact shortcut mass in the DSL stress context. F reduces that mass to {m['F']['exact_risk']:.4f}% through soft feedback. G turns witnessed violations into persistent support exclusions and reaches zero, the same support restriction an informed human can install at step zero. That is a useful systems result within a bounded language, not a solution to unknown specification gaming in general.
-
-{oracle_note}
-
-In the six-token DSL, kernel 3 is explicitly designated a shortcut by the trusted interpreter. G uses this known primitive contract after a counterexample; it does not infer universal unsafety from one failure. Every G main run certified that primitive in the first update. A static oracle is therefore the right control, and dynamically rediscovering the restriction is not the central scientific contribution.
+The transfer restriction matters immediately: `len(x) > 12` and `12 < len(x)` are equivalent, but have different signatures, so discovering one does not block the other. The catalog was supplied by the researchers; these are family-level discovery rates, not policy-weighted risk or evidence that an LLM invented the attacks.
 
 ## The more interesting test: conditional Python exploits
 
@@ -163,12 +208,11 @@ Across nine G runs, discovered cutoff counts were `{py['G']['rules']}`: **{old_f
 
 We added a separate, broader discovery test. Its compiler starts with no banned signatures and accepts any permitted leading guard/return shape; its prober does not parse conditions, import the attack catalog, or receive trigger constants or evaluator witnesses. It searches scale, value range and input structure using only executed correctness feedback. The evaluator separately supplies size, modulo/parity and value-trigger cases, plus held-out honest suffix variants.
 
-{discovery_table}
-The oracle blocks every evaluator-labeled exploit family by construction. G discovers **{found}/{total} ({100*found/total:.1f}%)** and blocks the same number of held-out suffix variants. None of the {total} tested honest control instances was blocked; the controls do not establish a general false-positive bound. Recall counts a family only after an independently replayed wrong return is compiled, not merely when its source parses.
+In the earlier eight-probes-per-family study, adaptive search discovered **{found}/{total} ({100*found/total:.1f}%)** and blocked the same number of held-out suffix variants. None of the {total} tested honest control instances was blocked; the controls do not establish a general false-positive bound. Recall counts a family only after an independently replayed wrong return is compiled, not merely when its source parses.
 
-Discovery used {probe_calls} search executions plus {found} independent compiler replays, excluding evaluator/control work. That is {probe_calls/total:.2f} search executions per family instance on average. The comparison to two small static checks measures expanded coverage with a larger search budget; it does not establish an advantage over matched-budget random fuzzing.
+That earlier study used {probe_calls} search executions plus {found} independent compiler replays, excluding evaluator/control work. The matched comparison above is a new experiment: both methods use 792 search executions, allocated within each suite/seed by the same least-probed-first schedule. The earlier adaptive total therefore cannot be compared directly to either matched-study total: the allocation and stopping schedules changed. Opportunities for individual families can differ as each method finds different failures. Search-execution counts exclude compiler replays, so this is not an equal wall-clock-cost comparison.
 
-The original **{py['G']['risk']:.2f}%** is a policy-weighted risk in a trained finite grammar. The expanded test's **{100*(total-found)/total:.1f}% undiscovered family fraction** is an unweighted coverage measure, not a new policy risk estimate. No neural policy was trained on the expanded catalog for these recall numbers. The generalized TRL wiring separately received a two-update gradient smoke test.
+The original **{py['G']['risk']:.2f}%** is a policy-weighted risk in a trained finite grammar. The earlier expanded test's **{100*(total-found)/total:.1f}% undiscovered family fraction** is an unweighted coverage measure, not a new policy risk estimate. No neural policy was trained on the expanded catalog for these recall numbers. The generalized TRL wiring separately received a two-update gradient smoke test.
 
 ## What the compiler actually does
 
@@ -177,6 +221,17 @@ An audit generates inputs, executes a candidate and compares its output with an 
 Rules are published between completed optimizer updates. Generation, old log probabilities and current likelihood scoring share a frozen grammar version throughout each update. The root TRL adapter no longer treats discovery of four rules as proof of saturation; unknown families require continuing exploration. The original adapter is preserved under `phase3/` so historical results remain reproducible.
 
 ![Generalization and discovery recall](assets/generalization_discovery.png)
+
+## DSL sanity check
+
+{table}
+{note}
+
+D's incomplete monitored-input specification leaves {m['D']['exact_risk']:.2f}% exact shortcut mass in the DSL stress context. F reduces that mass to {m['F']['exact_risk']:.4f}% through soft feedback. G reaches zero, the same support restriction an informed human can install at step zero.
+
+{oracle_note}
+
+Kernel 3 is explicitly designated a shortcut by the trusted interpreter; G uses this known primitive contract after a counterexample and does not infer universal unsafety from one failure. Every G main run certified the primitive in the first update. This is a bounded sanity check, not discovery of an unknown primitive.
 
 ## Where it breaks
 
@@ -230,6 +285,26 @@ This table includes all misses. `mod_257_251` lies outside the maximum probed si
 
 The study's recorded wall time is {discovery['protocol']['elapsed_seconds']:.1f} seconds, including evaluator/control execution; smoke tests shared the machine for part of this run. It is not an isolated overhead calibration. The nine RNG seeds are reused across the two suites, so the {total} family instances should not be treated as independent statistical replicates.
 
+### Matched-budget fuzzing comparison
+
+The paired experiment gives each method 44 search executions per suite/seed, 792 total, on the same two suites, nine seeds and twelve supplied families. Both start with an empty rule store, use identical 54 search arms, input generation, verifier and compiler, and share a fixed randomized family order. Uniform keeps the initial weights; adaptive applies the same feedback updates as the previous study. Within each run, the least-probed undiscovered family is checked next, breaking ties by the fixed order; the per-family cap equals the whole 44-call run budget. This avoids the earlier eight-probe cap and allows the budget to continue targeting unresolved families. Each found family incurs an extra independent witness replay outside the search budget. Thus the search budget is matched globally and per suite/seed, not necessarily per family or in total wall-clock time.
+
+Both schedulers react to discovery by moving probes toward unresolved families. The uniform control randomizes input arms uniformly; it is not a fully non-adaptive policy for allocating candidate programs.
+
+Primary-run padding calls: {primary_padding['adaptive']} adaptive and {primary_padding['uniform']} uniform. Non-padding calls test candidates not yet discovered by that method in the corresponding run.
+
+The matched study uses the same seed numbers and family orders for each method, but once their choices diverge, the actual sampled inputs need not coincide. The 95% interval bootstraps the nine paired seed-level differences, averaging the two suites within each seed; it does not treat the 216 family instances as independent observations. Selection and budget decisions are reported in [full-budget matched_fuzzing.json](extension_results/full_budget/matched_fuzzing.json). Run [audit_search.py](audit_search.py) to reconstruct the search arms, scheduling and witness inputs from seeds; actual witness correctness is checked separately by execution. No unrestricted LLM was trained on this catalog.
+
+The first matched run retained the earlier eight-probe family cap. Adaptive found {capped_overall['adaptive']}/{capped_overall['total']} and uniform found {capped_overall['uniform']}/{capped_overall['total']}; their difference was {capped_overall['difference_pp']:+.1f} pp (paired 95% interval {capped_overall['ci'][0]:+.1f} to {capped_overall['ci'][1]:+.1f}). Because remaining families hit the cap, {padding['adaptive']} adaptive and {padding['uniform']} uniform calls were padding. In the distributed run, all padding revisited already discovered candidates. After inspecting that result and its padding, we chose to run the full-budget protocol presented as the primary table above. This is a post-inspection follow-up, not a preregistered independent confirmation. The first result is preserved in [capped matched_fuzzing.json](extension_results/matched_fuzzing.json).
+
+| Category | Adaptive minus uniform (pp) | Paired 95% bootstrap interval (pp) |
+|---|---:|---:|
+{matched_intervals}
+
+| Trigger family | Adaptive found | Uniform found |
+|---|---:|---:|
+{matched_failures}
+
 ### Reproduction and implementation limits
 
 `python reproduce_all.py` rebuilds experiments in a fresh output tree. `--smoke` tests integration without reproducing headline metrics; `--verify-only` checks the distributed evidence. [VALIDATION.md](VALIDATION.md) distinguishes runs executed for this release from preserved historical evidence. File hashes are in `SHA256SUMS.txt`; source/config hashes are embedded in experiment metadata. Historical manifests document old packages and are not manifests for this consolidated directory.
@@ -240,20 +315,30 @@ All source and supplied checkpoints are under [MIT](LICENSE); there is no withhe
 '''
     post=f'''# Empirical Notes: Using Sparse Adversarial Probing & AST Shield Compilation to Catch Conditional Specification Gaming (And Where It Breaks)
 
-Can a system discover an omitted condition in its tests and turn the resulting counterexample into a restriction that survives further training? I tested a small version of that question using neural policies that generate bounded programs. The useful result is partial: witnessed conditional exploits can be removed cheaply once their structure is known, but finite probing leaves real holes.
+{hook}
+
+{discovery_table}
+{matched_note}
+
+The transfer limitation is immediate: after learning to block `len(x) > 12`, the shield still permits the equivalent `12 < len(x)`. This is a test of supplied functions and a restricted grammar, not an autonomous search for arbitrary exploits.
 
 Everything is now public: [training, compiler, prober, checkpoints and reproduction instructions](https://github.com/prabinkc-a/compiled-shielding-eval). Earlier packaging withheld the training engine. That made the most interesting claims harder to inspect, so this release removes that split.
 
-## The result I would lead with
+## How the matched comparison works
+
+Both methods search the same size, value-range and structure arms and receive the same correctness feedback. Each gets 44 search executions per suite/seed, 792 total, under the same candidate scheduler; the per-family cap equals the full 44-call budget. Independent witness replays are extra. Uniform fuzzing keeps every arm equally likely, while adaptive search updates weights after failures. Because each method can find different families at different times, the schedule need not give an identical number of probes to each individual family, even though the total is equal. Seeds and family order are matched; individual sampled inputs can diverge.
+
+The study measures family discovery and exact-syntax suffix transfer in a supplied catalog. It does not measure end-to-end LLM training overhead or the probability of a trained model exploiting these new triggers. The paired seed-level interval above is descriptive and rests on only nine seeds.
+
+The first matched run used an eight-probe family cap: adaptive found {capped_overall['adaptive']}/{capped_overall['total']} and uniform found {capped_overall['uniform']}/{capped_overall['total']}, but {padding['adaptive']} adaptive and {padding['uniform']} uniform calls were padding after remaining families hit the cap. We chose the full-budget follow-up after inspecting that run, so it is not preregistered independent confirmation.
+
+## The earlier Python training result
 
 In the original bounded Python/TRL experiment, G discovered **{old_found} of {old_total} cutoff-family instances ({100*old_found/old_total:.1f}% recall)**. A discovered guard was compiled into a restriction that also blocked functions with the same guard and a different supplied suffix. Mean exact exploit mass fell from **{py['baseline']['risk']:.2f}% to {py['G']['risk']:.2f}%**, at **{pycost:.2f}× training wall time**. The remaining risk matters: sampled evaluation happened to show no violations, while enumerating the grammar exposed probability on undiscovered cutoffs.
 
 There is a correction attached to that result. The grammar already supplied the four cutoffs and the old compiler recognized `len(x) > literal`; the prober inspected the literal. These were unspecified as *bans*, not unknown as *possible program structures*. This was not an LLM inventing attacks or a verifier discovering arbitrary vulnerabilities.
 
-I therefore added a stricter, separate discovery study. The new prober receives correctness feedback but cannot read trigger parameters or evaluator witnesses. Its rule store starts empty; its compiler handles any permitted first guard/return shape rather than one length comparison. Across sum and LIS functions with size, modulo/parity and value triggers, it found **{found}/{total} ({100*found/total:.1f}%)** family instances. That weaker recall is part of the result, not an inconvenient number to hide.
-
-{discovery_table}
-Those are unweighted discovery-recall figures from a supplied attack catalog. They are **not** measurements of a newly trained model's exploit probability. Held-out suffix variants were blocked exactly when their family was discovered. None of the tested honest controls was blocked, but the control set is small and far from a general soundness proof.
+The separate earlier discovery study used a different per-family schedule and found **{found}/{total} ({100*found/total:.1f}%)** instances. Its held-out suffix variants were blocked exactly when their family was discovered. None of its tested honest controls was blocked, but the control set is small and far from a general soundness proof. The matched comparison at the top uses a new schedule, so its totals are not the same experimental run.
 
 ## What is being compiled?
 
@@ -287,7 +372,7 @@ The modest defensible claim is that counterexamples can repair an incomplete sta
 
 Eight probes per candidate are not comprehensive. A length residue beyond every searched size cannot be found. A rare in-range residue may never be sampled. A special value combination can evade broad value-range mutations. The family-by-family misses and replayable witnesses are included in [the report](https://github.com/prabinkc-a/compiled-shielding-eval/blob/main/REPORT.md).
 
-The old Python result leaves {py['G']['risk']:.2f}% policy-weighted grammar risk. The broader test leaves {100*(total-found)/total:.1f}% of family instances undiscovered. These are different denominators, and I would not combine them into a single safety score. Nor should the low warm DSL cost be advertised as the cost of searching arbitrary Python: the Python experiment was slower, and the expanded coverage test has its own budget.
+The old Python result leaves {py['G']['risk']:.2f}% policy-weighted grammar risk. The earlier expanded discovery test leaves {100*(total-found)/total:.1f}% of family instances undiscovered. These are different denominators, and I would not combine them into a single safety score. Nor should the low warm DSL cost be advertised as the cost of searching arbitrary Python: the Python experiment was slower, and the expanded coverage test has its own budget.
 
 ## What this is not evidence for
 
@@ -297,7 +382,7 @@ The worker is not an OS sandbox. Correctness depends on trusted reference algori
 
 Shielding itself is established prior work; [Alshiekh et al.](https://arxiv.org/abs/1708.08611) study enforcing specifications through shields in reinforcement learning. I see this experiment as an engineering case study in discovering counterexamples, retaining their consequences and measuring what remains uncovered—not a new general alignment principle. Classical Nyaya/Mimamsa ideas were motivating analogies for adversarial examination and constraint priority, not formal guarantees.
 
-The next experiment I would trust more would hold training exposure fixed, let a separate party construct held-out trigger families, and compare sparse probing plus compilation against both a static oracle and matched-budget fuzzing on a pretrained code model. For now, the useful artifact is inspectable code with explicit misses: `python reproduce_all.py` rebuilds the experiment pipeline, and `--smoke` provides a much shorter integration check.
+The next experiment I would trust more would hold training exposure fixed, let a separate party construct held-out trigger families, and compare sparse probing plus compilation against both a static oracle and matched-budget fuzzing on a pretrained code model. The matched comparison here is on supplied functions, not a pretrained model. For now, the useful artifact is inspectable code with explicit misses: `python reproduce_all.py` rebuilds the experiment pipeline, and `--smoke` provides a much shorter integration check.
 
 *Draft for LessWrong / Alignment Forum; not submitted.*
 '''
@@ -312,14 +397,17 @@ The next experiment I would trust more would hold training exposure fixed, let a
         for size in (8,12,20,40,80,160):
             rows=[r for r in evaluation if r['method']==method and r['decode']=='sample' and r['condition']=='unmonitored' and int(r['size'])==size]
             ys.append(100*mean(rows,'truth'))
-        axes[0].plot((8,12,20,40,80,160),ys,marker='o',label=method)
-    axes[0].set(xlabel='Held-out task size',ylabel='True accuracy (%)',title='Neural DSL generalization',ylim=(70,101))
-    axes[0].legend(ncol=2)
-    categories=list(metrics['discovery'])
-    axes[1].bar(categories,[100*r['found']/r['total'] for r in metrics['discovery'].values()],color=['#3478a0','#b46a26','#59864d'])
-    axes[1].axhline(100,color='gray',linestyle='--',label='Catalog oracle')
-    axes[1].set(ylabel='Family discovery recall (%)',title='Separate trigger-blind discovery test',ylim=(0,110))
-    axes[1].legend()
+        axes[1].plot((8,12,20,40,80,160),ys,marker='o',label=method)
+    axes[1].set(xlabel='Held-out task size',ylabel='True accuracy (%)',title='Neural DSL generalization',ylim=(70,101))
+    axes[1].legend(ncol=2)
+    categories=['size','modulo/parity','value range']
+    positions=np.arange(len(categories))
+    axes[0].bar(positions-.18,[100*metrics['matched'][c]['adaptive']/metrics['matched'][c]['total'] for c in categories],width=.36,label='Adaptive')
+    axes[0].bar(positions+.18,[100*metrics['matched'][c]['uniform']/metrics['matched'][c]['total'] for c in categories],width=.36,label='Uniform')
+    axes[0].set_xticks(positions,categories)
+    axes[0].axhline(100,color='gray',linestyle='--',label='Catalog oracle (by definition)')
+    axes[0].set(ylabel='Family discovery recall (%)',title='Separate trigger-blind discovery test',ylim=(0,110))
+    axes[0].legend()
     (ROOT/'assets').mkdir(exist_ok=True)
     fig.savefig(ROOT/'assets/generalization_discovery.png',dpi=300)
     plt.close(fig)

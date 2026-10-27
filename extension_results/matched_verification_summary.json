@@ -1,0 +1,33 @@
+{
+  "status": "passed",
+  "training_source_hashes": 50,
+  "neural": {
+    "models": 144,
+    "evaluation_cells": 3456
+  },
+  "python_models": 18,
+  "replayed_discovery_witnesses": 162,
+  "matched_comparisons": {
+    "capped": {
+      "search_counts": {
+        "adaptive": 792,
+        "uniform": 792
+      },
+      "replayed_witnesses": 292
+    },
+    "full_budget": {
+      "search_counts": {
+        "adaptive": 792,
+        "uniform": 792
+      },
+      "replayed_witnesses": 292
+    }
+  },
+  "seconds": 148.45460679987445,
+  "tests_passed": 55,
+  "trajectory_audits": {
+    "capped_search_executions": 1584,
+    "full_budget_search_executions": 1584
+  },
+  "full_historical_retraining_run_for_update": false
+}

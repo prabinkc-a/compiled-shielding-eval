@@ -140,6 +140,8 @@ def main():
     source_count+=check_source_meta(ROOT/'phase3/results/metadata.json',ROOT)
     source_count+=check_source_meta(ROOT/'extension_results/controls.json',ROOT)
     source_count+=check_source_meta(ROOT/'extension_results/discovery.json',ROOT)
+    source_count+=check_source_meta(ROOT/'extension_results/matched_fuzzing.json',ROOT)
+    source_count+=check_source_meta(ROOT/'extension_results/full_budget/matched_fuzzing.json',ROOT)
     meta=json.loads((ROOT/'phase3/results/python/metadata.json').read_text(encoding='utf-8'))
     for name in ('python_backend.py','python_worker.py','python_grammar.py','python_trl_benchmark.py','trl_patch.py'):
         assert hashlib.sha256((ROOT/'phase3'/name).read_bytes()).hexdigest()==meta['source_sha256'][name]
@@ -158,8 +160,37 @@ def main():
             witnesses+=1
         compiler.publish()
         assert compiler.rules==set(record['rules'])
+    from discovery_catalog import families, program
+    catalog={f['name']:f for f in families()}
+    comparisons={}
+    for label,path in (('capped',ROOT/'extension_results/matched_fuzzing.json'),
+                       ('full_budget',ROOT/'extension_results/full_budget/matched_fuzzing.json')):
+        matched=json.loads(path.read_text(encoding='utf-8'))
+        assert matched['records']==[r for run in matched['runs'] for r in run['records']]
+        matched_witnesses=0
+        counts={'adaptive':0,'uniform':0}
+        for run in matched['runs']:
+            records=run['records']
+            suite,method=records[0]['suite'],records[0]['method']
+            assert all(r['suite']==suite and r['method']==method for r in records)
+            assert len(run['trace'])==matched['protocol']['budget_per_suite_seed']
+            assert sum(r['probes'] for r in records)==len(run['trace'])
+            counts[method]+=len(run['trace'])
+            compiler=SubtreeCompiler(suite)
+            for witness in run['witnesses']:
+                assert compiler.propose(witness['source'],witness['x'])
+                matched_witnesses+=1
+            compiler.publish()
+            assert compiler.rules==set(run['rules'])
+            assert sum(r['discovered'] for r in records)==len(compiler.rules)
+            assert all(r['discovered']==r['heldout_variant_blocked'] for r in records)
+            for r in records:
+                assert (not compiler.admissible(program(suite,catalog[r['family']],1)))==r['discovered']
+        assert all(v==matched['protocol']['total_search_executions_per_method'] for v in counts.values())
+        comparisons[label]=dict(search_counts=counts,replayed_witnesses=matched_witnesses)
     print(json.dumps(dict(status='passed',files_hashed=files,training_source_hashes=source_count,
         neural=neural_result,python_models=python_models,replayed_discovery_witnesses=witnesses,
+        matched_comparisons=comparisons,
         seconds=time.perf_counter()-start),indent=2))
 
 

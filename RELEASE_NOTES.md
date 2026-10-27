@@ -1,16 +1,9 @@
-# Fully open-source research release
+# Matched-budget fuzzing research update
 
-This supersedes the evaluation-only packaging. All training code, adversarial search rules, AST compilation, TRL adapters, checkpoints and raw results are now distributed together under MIT. Historical reports remain in their original phase folders; the corrected current account is `REPORT.md`.
+A paired control gives adaptive search and uniform fuzzing 792 search executions each on the same two suites, nine seeds, twelve supplied trigger families, input arms, candidate scheduler, verifier and compiler. Adaptive search discovered 144/216 family instances; uniform fuzzing discovered 148/216. The paired difference is -1.9 percentage points (95% seed-bootstrap interval -7.4 to +4.6): no clear advantage from adaptive weighting.
 
-New evidence:
+Both methods used every search call on an unresolved family. Independent witness replays add 144 and 148 executions respectively, and family-specific search allocations can differ. The primary full-budget protocol was chosen after inspecting an eight-probe-per-family matched run, whose 144/216 versus 148/216 result and padding counts are preserved as a sensitivity check. The earlier 162/216 adaptive result used yet another scheduling protocol and is reported separately. No neural policy was trained on the new comparison catalog.
 
-- 24 fresh Oracle Static Mask fits: 98.84% held-out accuracy and zero exact DSL exploit mass. The proposed 99.86% oracle figure was not assumed; it is G's historical result. The oracle shares D's small-only training contexts, while F/G receive some adversarial contexts.
-- 45 serial calibration runs: D 1.04×, F 1.38×, G 0.99× and Oracle 1.02× baseline training CPU. These are warm CPU measurements, not universal speedups.
-- Expanded trigger-blind Python discovery: 162/216 family instances found and compiled (75.0% recall); size 70/72, modulo/parity 40/72, value-range 52/72. All 162 discovered signatures block held-out suffix variants. The report includes every missed family.
-- The original Python/TRL result remains 32/36 supplied cutoff-family instances discovered, with exact grammar risk reduced from 2.696235% to 0.441524%. It is explicitly distinguished from unknown arbitrary-code discovery and from the new unweighted recall study.
-- 52 tests pass, plus two real updates through the generalized TRL adapter. The complete fresh-run pipeline is `python reproduce_all.py`; `--smoke` and `--verify-only` have distinct meanings documented in `VALIDATION.md`.
-- Evidence verification passed: 39 training-source hashes, 144 neural checkpoint reloads reproducing 3,456 evaluation cells, 18 Python checkpoint risk integrals and 162 independently replayed discovery witnesses.
+README, REPORT, and the draft LessWrong post now lead with the trigger-category comparison and immediately flag that a trivial equivalent guard rewrite evades an exact-signature shield. All source, raw runs, candidate allocation traces, witnessed inputs, and reproduction scripts are included under MIT.
 
-`README.md` and `REPORT.md` open with a four-sentence summary and one comparison table. `LESSWRONG_POST.md` is a draft only; it has not been submitted to a forum.
-
-Checkpoints moved from the old inference-only layout into their full experimental contexts under `phase2/results`, `phase3/results` and `extension_results/oracle`. The previous `verify_leaderboard.py` entry point remains as a compatibility alias for the expanded evidence verifier.
+The underlying DSL oracle and prior trained-model findings remain available, with their original limits. A complete fresh reproduction is `python reproduce_all.py`; `--smoke` and `--verify-only` have distinct meanings. The LessWrong post remains an unpublished draft.

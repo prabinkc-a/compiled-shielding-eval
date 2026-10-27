@@ -45,7 +45,8 @@ def main():
         ['-m','phase2.legacy_bridge'],
         ['-m','phase3.run'],['-m','phase3.profile'],['-m','phase3.exact_risk'],
         ['-m','phase3.latency'],['-m','phase3.python_trl_benchmark'],
-        ['run_controls.py'],['run_discovery.py'],['build_release_report.py'],
+        ['run_controls.py'],['run_discovery.py'],['run_matched_fuzzing.py'],
+        ['run_matched_full_budget.py'],['audit_search.py'],['build_release_report.py'],
         ['-m','pytest','-q','tests','phase2/tests','phase3/tests','extension_tests'],
         ['trl_example.py'],
     ]

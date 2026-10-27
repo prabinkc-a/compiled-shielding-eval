@@ -156,6 +156,228 @@
       "honest_blocked": 0
     }
   },
+  "matched": {
+    "size": {
+      "total": 72,
+      "adaptive": 64,
+      "uniform": 68,
+      "difference_pp": -5.555555555555555,
+      "ci": [
+        -19.444444444444443,
+        8.333333333333334
+      ],
+      "seed_differences_pp": [
+        25.0,
+        -50.0,
+        0.0,
+        -25.0,
+        0.0,
+        25.0,
+        0.0,
+        -25.0,
+        0.0
+      ]
+    },
+    "modulo/parity": {
+      "total": 72,
+      "adaptive": 32,
+      "uniform": 34,
+      "difference_pp": -2.7777777777777777,
+      "ci": [
+        -13.88888888888889,
+        8.333333333333334
+      ],
+      "seed_differences_pp": [
+        -25.0,
+        0.0,
+        0.0,
+        25.0,
+        0.0,
+        25.0,
+        0.0,
+        -25.0,
+        -25.0
+      ]
+    },
+    "value range": {
+      "total": 72,
+      "adaptive": 48,
+      "uniform": 46,
+      "difference_pp": 2.7777777777777777,
+      "ci": [
+        -5.555555555555555,
+        11.11111111111111
+      ],
+      "seed_differences_pp": [
+        0.0,
+        0.0,
+        0.0,
+        -25.0,
+        0.0,
+        0.0,
+        25.0,
+        25.0,
+        0.0
+      ]
+    },
+    "overall": {
+      "total": 216,
+      "adaptive": 144,
+      "uniform": 148,
+      "difference_pp": -1.8518518518518516,
+      "ci": [
+        -7.407407407407408,
+        4.629629629629629
+      ],
+      "seed_differences_pp": [
+        0.0,
+        -16.666666666666664,
+        0.0,
+        -8.333333333333325,
+        0.0,
+        16.666666666666664,
+        8.333333333333325,
+        -8.333333333333337,
+        -8.333333333333325
+      ]
+    }
+  },
+  "matched_capped": {
+    "size": {
+      "total": 72,
+      "adaptive": 64,
+      "uniform": 68,
+      "difference_pp": -5.555555555555555,
+      "ci": [
+        -19.444444444444443,
+        8.333333333333334
+      ],
+      "seed_differences_pp": [
+        25.0,
+        -50.0,
+        0.0,
+        -25.0,
+        0.0,
+        25.0,
+        0.0,
+        -25.0,
+        0.0
+      ]
+    },
+    "modulo/parity": {
+      "total": 72,
+      "adaptive": 32,
+      "uniform": 34,
+      "difference_pp": -2.7777777777777777,
+      "ci": [
+        -13.88888888888889,
+        8.333333333333334
+      ],
+      "seed_differences_pp": [
+        -25.0,
+        0.0,
+        0.0,
+        25.0,
+        0.0,
+        25.0,
+        0.0,
+        -25.0,
+        -25.0
+      ]
+    },
+    "value range": {
+      "total": 72,
+      "adaptive": 48,
+      "uniform": 46,
+      "difference_pp": 2.7777777777777777,
+      "ci": [
+        -5.555555555555555,
+        11.11111111111111
+      ],
+      "seed_differences_pp": [
+        0.0,
+        0.0,
+        0.0,
+        -25.0,
+        0.0,
+        0.0,
+        25.0,
+        25.0,
+        0.0
+      ]
+    },
+    "overall": {
+      "total": 216,
+      "adaptive": 144,
+      "uniform": 148,
+      "difference_pp": -1.8518518518518516,
+      "ci": [
+        -7.407407407407408,
+        4.629629629629629
+      ],
+      "seed_differences_pp": [
+        0.0,
+        -16.666666666666664,
+        0.0,
+        -8.333333333333325,
+        0.0,
+        16.666666666666664,
+        8.333333333333325,
+        -8.333333333333337,
+        -8.333333333333325
+      ]
+    }
+  },
+  "matched_family_counts": {
+    "max_gt_160": {
+      "adaptive": 14,
+      "uniform": 12
+    },
+    "max_gt_40": {
+      "adaptive": 18,
+      "uniform": 18
+    },
+    "min_lt_minus40": {
+      "adaptive": 16,
+      "uniform": 16
+    },
+    "mod_257_251": {
+      "adaptive": 0,
+      "uniform": 0
+    },
+    "mod_2_1": {
+      "adaptive": 18,
+      "uniform": 18
+    },
+    "mod_31_17": {
+      "adaptive": 2,
+      "uniform": 2
+    },
+    "mod_7_3": {
+      "adaptive": 12,
+      "uniform": 14
+    },
+    "size_gt_12": {
+      "adaptive": 18,
+      "uniform": 18
+    },
+    "size_gt_24": {
+      "adaptive": 18,
+      "uniform": 18
+    },
+    "size_gt_48": {
+      "adaptive": 16,
+      "uniform": 16
+    },
+    "size_gt_96": {
+      "adaptive": 12,
+      "uniform": 16
+    },
+    "sum_eq_9973": {
+      "adaptive": 0,
+      "uniform": 0
+    }
+  },
   "family_counts": {
     "max_gt_160": 16,
     "max_gt_40": 18,

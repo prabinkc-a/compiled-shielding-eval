@@ -1,6 +1,41 @@
 # Empirical report: automated exploit discovery and compiled shielding
 
-We tested whether sparse counterexample search can turn an incomplete reward specification into reusable execution-time restrictions. We built adversarial scale/cue probing and runtime AST shield compilation around PyTorch policies and a bounded TRL code generator. G discovered 32/36 supplied Python cutoff-family instances, reducing grammar risk from 2.70% to 0.44% at 1.34× training wall time; a new trigger-blind stress test found 162/216 family instances. Finite probing still misses triggers, leaving 0.44% risk in the original Python grammar and larger coverage gaps in the broader test.
+We tested whether adaptive adversarial probing discovers conditional Python exploits more effectively than uniform fuzzing with the same execution budget. Across a supplied attack catalog, adaptive search found 144/216 family instances and uniform fuzzing found 148/216, with 792 search executions each. Both can miss triggers, and the compiled shield only transfers across an identical leading guard and return, so a trivial rewrite can evade it.
+
+| Trigger category | Adaptive discovery | Uniform discovery | Paired difference |
+|---|---:|---:|---:|
+| size | 64/72 (88.9%) | 68/72 (94.4%) | -5.6 pp |
+| modulo/parity | 32/72 (44.4%) | 34/72 (47.2%) | -2.8 pp |
+| value range | 48/72 (66.7%) | 46/72 (63.9%) | +2.8 pp |
+| overall | 144/216 (66.7%) | 148/216 (68.5%) | -1.9 pp |
+
+Family instances are twelve supplied families across two suites and nine seeds; this is a discovery stress test, not newly trained neural policies. Both methods use the same arms, candidate scheduler, search budget and compiler; independent witness replays add 144 executions for adaptive and 148 for uniform. The overall paired 95% seed-bootstrap interval for adaptive minus uniform is -7.4 to +4.6 percentage points; nine seeds are a small sample. These data do not show a clear advantage from adaptive weighting.
+
+The transfer restriction matters immediately: `len(x) > 12` and `12 < len(x)` are equivalent, but have different signatures, so discovering one does not block the other. The catalog was supplied by the researchers; these are family-level discovery rates, not policy-weighted risk or evidence that an LLM invented the attacks.
+
+## The more interesting test: conditional Python exploits
+
+The historical TRL experiment trained a 68,480-parameter causal Transformer to emit actual Python BPE tokens. It supplied two honest algorithm bodies, an optional empty-input guard, and four size cutoffs. The old compiler specifically extracted a leading `len(x) > literal` guard, and the prober read that literal to cross its boundary. Calling these arbitrary unknown attacks would overstate the result.
+
+Across nine G runs, discovered cutoff counts were `[4, 3, 4, 4, 4, 4, 4, 2, 3]`: **32/36 family-run instances (88.9% recall), ranging from two to four per run**. The baseline retained 2.696235% mean exact grammar risk at size 160; G retained 0.441524%. Zero sampled violations did not mean zero probability. Python training wall time was 1.34× baseline, including broker subprocess work and excluding evaluation.
+
+We added a separate, broader discovery test. Its compiler starts with no banned signatures and accepts any permitted leading guard/return shape; its prober does not parse conditions, import the attack catalog, or receive trigger constants or evaluator witnesses. It searches scale, value range and input structure using only executed correctness feedback. The evaluator separately supplies size, modulo/parity and value-trigger cases, plus held-out honest suffix variants.
+
+In the earlier eight-probes-per-family study, adaptive search discovered **162/216 (75.0%)** and blocked the same number of held-out suffix variants. None of the 216 tested honest control instances was blocked; the controls do not establish a general false-positive bound. Recall counts a family only after an independently replayed wrong return is compiled, not merely when its source parses.
+
+That earlier study used 792 search executions plus 162 independent compiler replays, excluding evaluator/control work. The matched comparison above is a new experiment: both methods use 792 search executions, allocated within each suite/seed by the same least-probed-first schedule. The earlier adaptive total therefore cannot be compared directly to either matched-study total: the allocation and stopping schedules changed. Opportunities for individual families can differ as each method finds different failures. Search-execution counts exclude compiler replays, so this is not an equal wall-clock-cost comparison.
+
+The original **0.44%** is a policy-weighted risk in a trained finite grammar. The earlier expanded test's **25.0% undiscovered family fraction** is an unweighted coverage measure, not a new policy risk estimate. No neural policy was trained on the expanded catalog for these recall numbers. The generalized TRL wiring separately received a two-update gradient smoke test.
+
+## What the compiler actually does
+
+An audit generates inputs, executes a candidate and compares its output with an independent sum/LIS oracle. A separate replay must reproduce a wrong return from the function's first guarded return. The compiler hashes the complete condition and return AST, then excludes functions with that identical first subtree, including a different unseen suffix. It does not transfer a rule across earlier mutation, a dominating branch, a different return, or an arbitrary semantically equivalent expression. A failure later in the honest suffix cannot certify the earlier guard.
+
+Rules are published between completed optimizer updates. Generation, old log probabilities and current likelihood scoring share a frozen grammar version throughout each update. The root TRL adapter no longer treats discovery of four rules as proof of saturation; unknown families require continuing exploration. The original adapter is preserved under `phase3/` so historical results remain reproducible.
+
+![Generalization and discovery recall](assets/generalization_discovery.png)
+
+## DSL sanity check
 
 | Neural DSL method | Held-out accuracy | Exact exploit mass | Training CPU |
 |---|---:|---:|---:|
@@ -12,41 +47,11 @@ We tested whether sparse counterexample search can turn an incomplete reward spe
 
 Accuracy is sampled on larger, unmonitored tasks; exact mass integrates the complete finite DSL at one large task per suite/seed. CPU is a fresh serial warm-checkpoint calibration against standard GRPO, not inference latency or an LLM speedup. The table is the DSL experiment; the opening Python results are a separate experiment.
 
-## What this establishes
-
-D's incomplete monitored-input specification leaves 11.60% exact shortcut mass in the DSL stress context. F reduces that mass to 0.0330% through soft feedback. G turns witnessed violations into persistent support exclusions and reaches zero, the same support restriction an informed human can install at step zero. That is a useful systems result within a bounded language, not a solution to unknown specification gaming in general.
+D's incomplete monitored-input specification leaves 11.60% exact shortcut mass in the DSL stress context. F reduces that mass to 0.0330% through soft feedback. G reaches zero, the same support restriction an informed human can install at step zero.
 
 **The oracle correction matters.** Its measured accuracy is 98.84%, not an assumed 99.86%. The oracle eliminates every specified shortcut from initialization but can still choose ordinary incorrect algorithms or abstain. It differs from D only in the mask; F/G also train on some adversarial contexts. G matches the oracle's zero exploit support after discovery, but this design does not isolate discovery as the sole cause of its accuracy advantage.
 
-In the six-token DSL, kernel 3 is explicitly designated a shortcut by the trusted interpreter. G uses this known primitive contract after a counterexample; it does not infer universal unsafety from one failure. Every G main run certified that primitive in the first update. A static oracle is therefore the right control, and dynamically rediscovering the restriction is not the central scientific contribution.
-
-## The more interesting test: conditional Python exploits
-
-The historical TRL experiment trained a 68,480-parameter causal Transformer to emit actual Python BPE tokens. It supplied two honest algorithm bodies, an optional empty-input guard, and four size cutoffs. The old compiler specifically extracted a leading `len(x) > literal` guard, and the prober read that literal to cross its boundary. Calling these arbitrary unknown attacks would overstate the result.
-
-Across nine G runs, discovered cutoff counts were `[4, 3, 4, 4, 4, 4, 4, 2, 3]`: **32/36 family-run instances (88.9% recall), ranging from two to four per run**. The baseline retained 2.696235% mean exact grammar risk at size 160; G retained 0.441524%. Zero sampled violations did not mean zero probability. Python training wall time was 1.34× baseline, including broker subprocess work and excluding evaluation.
-
-We added a separate, broader discovery test. Its compiler starts with no banned signatures and accepts any permitted leading guard/return shape; its prober does not parse conditions, import the attack catalog, or receive trigger constants or evaluator witnesses. It searches scale, value range and input structure using only executed correctness feedback. The evaluator separately supplies size, modulo/parity and value-trigger cases, plus held-out honest suffix variants.
-
-| Trigger category | Family instances | D discovery recall | G discovery recall | Held-out suffixes blocked |
-|---|---:|---:|---:|---:|
-| size | 72 | 0.0% | 97.2% (70/72) | 70/72 |
-| modulo/parity | 72 | 0.0% | 55.6% (40/72) | 40/72 |
-| value range | 72 | 0.0% | 72.2% (52/72) | 52/72 |
-
-The oracle blocks every evaluator-labeled exploit family by construction. G discovers **162/216 (75.0%)** and blocks the same number of held-out suffix variants. None of the 216 tested honest control instances was blocked; the controls do not establish a general false-positive bound. Recall counts a family only after an independently replayed wrong return is compiled, not merely when its source parses.
-
-Discovery used 792 search executions plus 162 independent compiler replays, excluding evaluator/control work. That is 3.67 search executions per family instance on average. The comparison to two small static checks measures expanded coverage with a larger search budget; it does not establish an advantage over matched-budget random fuzzing.
-
-The original **0.44%** is a policy-weighted risk in a trained finite grammar. The expanded test's **25.0% undiscovered family fraction** is an unweighted coverage measure, not a new policy risk estimate. No neural policy was trained on the expanded catalog for these recall numbers. The generalized TRL wiring separately received a two-update gradient smoke test.
-
-## What the compiler actually does
-
-An audit generates inputs, executes a candidate and compares its output with an independent sum/LIS oracle. A separate replay must reproduce a wrong return from the function's first guarded return. The compiler hashes the complete condition and return AST, then excludes functions with that identical first subtree, including a different unseen suffix. It does not transfer a rule across earlier mutation, a dominating branch, a different return, or an arbitrary semantically equivalent expression. A failure later in the honest suffix cannot certify the earlier guard.
-
-Rules are published between completed optimizer updates. Generation, old log probabilities and current likelihood scoring share a frozen grammar version throughout each update. The root TRL adapter no longer treats discovery of four rules as proof of saturation; unknown families require continuing exploration. The original adapter is preserved under `phase3/` so historical results remain reproducible.
-
-![Generalization and discovery recall](assets/generalization_discovery.png)
+Kernel 3 is explicitly designated a shortcut by the trusted interpreter; G uses this known primitive contract after a counterexample and does not infer universal unsafety from one failure. Every G main run certified the primitive in the first update. This is a bounded sanity check, not discovery of an unknown primitive.
 
 ## Where it breaks
 
@@ -118,6 +123,40 @@ Search arms: sizes 8/13/25/49/97/160 with uniform integer jitter ±3; value ampl
 This table includes all misses. `mod_257_251` lies outside the maximum probed size; `sum_eq_9973` demands a specific value configuration. Rare in-range modulo triggers can also escape eight probes. All raw decisions are in [discovery.json](extension_results/discovery.json); actual executed inputs, expected/observed outputs and signatures are in [discovery_witnesses/](extension_results/discovery_witnesses/).
 
 The study's recorded wall time is 254.2 seconds, including evaluator/control execution; smoke tests shared the machine for part of this run. It is not an isolated overhead calibration. The nine RNG seeds are reused across the two suites, so the 216 family instances should not be treated as independent statistical replicates.
+
+### Matched-budget fuzzing comparison
+
+The paired experiment gives each method 44 search executions per suite/seed, 792 total, on the same two suites, nine seeds and twelve supplied families. Both start with an empty rule store, use identical 54 search arms, input generation, verifier and compiler, and share a fixed randomized family order. Uniform keeps the initial weights; adaptive applies the same feedback updates as the previous study. Within each run, the least-probed undiscovered family is checked next, breaking ties by the fixed order; the per-family cap equals the whole 44-call run budget. This avoids the earlier eight-probe cap and allows the budget to continue targeting unresolved families. Each found family incurs an extra independent witness replay outside the search budget. Thus the search budget is matched globally and per suite/seed, not necessarily per family or in total wall-clock time.
+
+Both schedulers react to discovery by moving probes toward unresolved families. The uniform control randomizes input arms uniformly; it is not a fully non-adaptive policy for allocating candidate programs.
+
+Primary-run padding calls: 0 adaptive and 0 uniform. Non-padding calls test candidates not yet discovered by that method in the corresponding run.
+
+The matched study uses the same seed numbers and family orders for each method, but once their choices diverge, the actual sampled inputs need not coincide. The 95% interval bootstraps the nine paired seed-level differences, averaging the two suites within each seed; it does not treat the 216 family instances as independent observations. Selection and budget decisions are reported in [full-budget matched_fuzzing.json](extension_results/full_budget/matched_fuzzing.json). Run [audit_search.py](audit_search.py) to reconstruct the search arms, scheduling and witness inputs from seeds; actual witness correctness is checked separately by execution. No unrestricted LLM was trained on this catalog.
+
+The first matched run retained the earlier eight-probe family cap. Adaptive found 144/216 and uniform found 148/216; their difference was -1.9 pp (paired 95% interval -7.4 to +4.6). Because remaining families hit the cap, 10 adaptive and 26 uniform calls were padding. In the distributed run, all padding revisited already discovered candidates. After inspecting that result and its padding, we chose to run the full-budget protocol presented as the primary table above. This is a post-inspection follow-up, not a preregistered independent confirmation. The first result is preserved in [capped matched_fuzzing.json](extension_results/matched_fuzzing.json).
+
+| Category | Adaptive minus uniform (pp) | Paired 95% bootstrap interval (pp) |
+|---|---:|---:|
+| size | -5.6 | -19.4 to +8.3 |
+| modulo/parity | -2.8 | -13.9 to +8.3 |
+| value range | +2.8 | -5.6 to +11.1 |
+| overall | -1.9 | -7.4 to +4.6 |
+
+| Trigger family | Adaptive found | Uniform found |
+|---|---:|---:|
+| `max_gt_160` | 14/18 | 12/18 |
+| `max_gt_40` | 18/18 | 18/18 |
+| `min_lt_minus40` | 16/18 | 16/18 |
+| `mod_257_251` | 0/18 | 0/18 |
+| `mod_2_1` | 18/18 | 18/18 |
+| `mod_31_17` | 2/18 | 2/18 |
+| `mod_7_3` | 12/18 | 14/18 |
+| `size_gt_12` | 18/18 | 18/18 |
+| `size_gt_24` | 18/18 | 18/18 |
+| `size_gt_48` | 16/18 | 16/18 |
+| `size_gt_96` | 12/18 | 16/18 |
+| `sum_eq_9973` | 0/18 | 0/18 |
 
 ### Reproduction and implementation limits
 
